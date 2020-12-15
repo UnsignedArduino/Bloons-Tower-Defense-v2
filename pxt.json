@@ -1,0 +1,32 @@
+{
+    "name": "Bloons Tower Defense v2",
+    "description": "",
+    "dependencies": {
+        "device": "*",
+        "Timers": "github:microsoft/arcade-timers#v1.1.0",
+        "arcade-sprite-data": "github:microsoft/arcade-sprite-data#v0.1.0",
+        "tilemaps": "github:microsoft/pxt-tilemaps#v1.10.0",
+        "arcade-tilemap-a-star": "github:jwunderl/arcade-tilemap-a-star#v0.3.2",
+        "arcade-sprite-util": "github:jwunderl/arcade-sprite-util#v0.0.10",
+        "arcade-text": "github:pelikhan/arcade-image-text#v0.0.4",
+        "block-menu": "github:riknoll/arcade-custom-menu#v0.0.1"
+    },
+    "files": [
+        "main.blocks",
+        "main.ts",
+        "README.md",
+        "tilemap.g.jres",
+        "tilemap.g.ts"
+    ],
+    "testFiles": [
+        "test.ts"
+    ],
+    "targetVersions": {
+        "target": "1.2.16",
+        "targetId": "arcade"
+    },
+    "supportedTargets": [
+        "arcade"
+    ],
+    "preferredEditor": "blocksprj"
+}
