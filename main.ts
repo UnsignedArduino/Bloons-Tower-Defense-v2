@@ -96,12 +96,12 @@ function tack_shooter_right_click () {
     } else if (blockMenu.selectedMenuOption().includes("Decrease firing delay") && info.score() >= 50) {
         sprites.changeDataNumberBy(overlapping_sprite, "fire_dart_delay", -100)
         sprites.changeDataNumberBy(overlapping_sprite, "sell_price", 30)
-        overlapping_sprite.startEffect(effects.halo, 500)
+        overlapping_sprite.startEffect(effects.halo, 1000)
         change_score(-50)
     } else if (blockMenu.selectedMenuOption().includes("Increase dart life") && info.score() >= 30) {
         sprites.changeDataNumberBy(overlapping_sprite, "dart_life", 200)
         sprites.changeDataNumberBy(overlapping_sprite, "sell_price", 20)
-        overlapping_sprite.startEffect(effects.halo, 500)
+        overlapping_sprite.startEffect(effects.halo, 1000)
         change_score(-30)
     } else {
         sprite_cursor_pointer.say("Not enough money!", 1000)
@@ -141,7 +141,7 @@ info.onCountdownEnd(function () {
             display_wave = false
         })
         timer.background(function () {
-            info.startCountdown(wave * 10 * (Math.max(1000 - wave * 100, 100) / 100))
+            info.startCountdown(wave * 10 * (Math.max(1000 - wave * 100, 100) / 1000))
             for (let index = 0; index <= wave * 10 - 1; index++) {
                 summon_bloon(2, 0, Math.idiv(index, 30) + 1, Math.max(wave * 5 * (Math.idiv(index, 20) + 1), 20))
                 pause(Math.max(1000 - wave * 100, 100))
@@ -328,16 +328,7 @@ function dart_image_from_index (index: number) {
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         `]
-    if (index < 0 || index > dart_images.length - 1) {
-        return img`
-            . c c c . 
-            c c c c c 
-            c c c c c 
-            c c c c c 
-            . c c c . 
-            `
-    }
-    return dart_images[index]
+    return dart_images[Math.constrain(index, 0, dart_images.length - 1)]
 }
 function bloon_image_from_health (health: number) {
     bloon_images = [img`
@@ -426,27 +417,7 @@ function bloon_image_from_health (health: number) {
         . . . . . . . f . . . . . . . . 
         . . . . . . . f . . . . . . . . 
         `]
-    if (health - 1 < 0 || health > bloon_images.length) {
-        return img`
-            . . . . . . d d d c . . . . . . 
-            . . . . . d d c d d c . . . . . 
-            . . . . c d c c c d c c . . . . 
-            . . . . c d c c d d c c . . . . 
-            . . . . c c c d d c c c . . . . 
-            . . . . c c c d c c c c . . . . 
-            . . . . . c c c c c c . . . . . 
-            . . . . . c c d c c c . . . . . 
-            . . . . . . c c c c . . . . . . 
-            . . . . . . . c c . . . . . . . 
-            . . . . . . . f . . . . . . . . 
-            . . . . . . . f . . . . . . . . 
-            . . . . . . . . f . . . . . . . 
-            . . . . . . . . f . . . . . . . 
-            . . . . . . . f . . . . . . . . 
-            . . . . . . . f . . . . . . . . 
-            `
-    }
-    return bloon_images[health - 1]
+    return bloon_images[Math.constrain(health, 0, bloon_images.length) - 1]
 }
 function update_tack_shooter (sprite: Sprite) {
     timer.throttle(convertToText(sprites.readDataNumber(sprite, "tower_id")), sprites.readDataNumber(sprite, "fire_dart_delay"), function () {
@@ -503,7 +474,7 @@ function summon_tack_shooter () {
         . . f f f f f f f f f f f f . . 
         `, SpriteKind.Tower)
     sprite_tower.setPosition(sprite_cursor_pointer.x, sprite_cursor_pointer.y)
-    sprites.setDataNumber(sprite_tower, "fire_dart_delay", 500)
+    sprites.setDataNumber(sprite_tower, "fire_dart_delay", 1000)
     sprites.setDataNumber(sprite_tower, "fire_dart_delay_min", 100)
     sprites.setDataNumber(sprite_tower, "tower_id", tower_counter)
     sprites.setDataNumber(sprite_tower, "tower_distance", 32)
@@ -538,12 +509,12 @@ function dart_monkey_right_click () {
     } else if (blockMenu.selectedMenuOption().includes("Decrease firing delay") && info.score() >= 50) {
         sprites.changeDataNumberBy(overlapping_sprite, "fire_dart_delay", -200)
         sprites.changeDataNumberBy(overlapping_sprite, "sell_price", 30)
-        overlapping_sprite.startEffect(effects.halo, 500)
+        overlapping_sprite.startEffect(effects.halo, 1000)
         change_score(-50)
     } else if (blockMenu.selectedMenuOption().includes("Increase visibility") && info.score() >= 30) {
         sprites.changeDataNumberBy(overlapping_sprite, "tower_distance", 16)
         sprites.changeDataNumberBy(overlapping_sprite, "sell_price", 20)
-        overlapping_sprite.startEffect(effects.halo, 500)
+        overlapping_sprite.startEffect(effects.halo, 1000)
         change_score(-30)
     } else {
         sprite_cursor_pointer.say("Not enough money!", 1000)
@@ -607,7 +578,7 @@ let wave_begin = false
 let display_wave = false
 let wave = 0
 let debug = false
-debug = true
+debug = false
 create_cursor()
 set_map_field_of_flowers()
 set_ui_icons()
