@@ -31,48 +31,62 @@ function overlapping_sprite_of_kind (sprite: Sprite, kind: number) {
     return false
 }
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
-    blockMenu.setColors(1, 15)
-    // https://bloons.fandom.com/wiki/Tower_price_lists#Bloons_TD_5:~:text=%24.-,Bloons%20TD%205
-    blockMenu.showMenu(["Cancel", "Dart Monkey"], MenuStyle.Grid, MenuLocation.BottomHalf)
-    wait_for_menu_select()
-    if (blockMenu.selectedMenuIndex() == 0) {
-    	
-    } else if (blockMenu.selectedMenuIndex() == 1 && ((info.score() >= 30 || debug) && (on_valid_land_spot(sprite_cursor_pointer) && !(overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower))))) {
-        sprite_tower = sprites.create(img`
-            . . . . f f f f f . . . . . . . 
-            . . . f e e e e e f . . . . . . 
-            . . f d d d d e e e f . . . . . 
-            . c d f d d f d e e f f . . . . 
-            . c d f d d f d e e d d f . . . 
-            c d e e d d d d e e b d c . . . 
-            c d d d d c d d e e b d c . f f 
-            c c c c c d d d e e f c . f e f 
-            . f d d d d d e e f f . . f e f 
-            . . f f f f f e e e e f . f e f 
-            . . . . f e e e e e e e f f e f 
-            . . . f e f f e f e e e e f f . 
-            . . . f e f f e f e e e e f . . 
-            . . . f d b f d b f f e f . . . 
-            . . . f d d c d d b b d f . . . 
-            . . . . f f f f f f f f f . . . 
-            `, SpriteKind.Tower)
-        sprite_tower.setPosition(sprite_cursor_pointer.x, sprite_cursor_pointer.y)
-        sprites.setDataNumber(sprite_tower, "fire_dart_delay", 1000)
-        sprites.setDataNumber(sprite_tower, "tower_id", tower_counter)
-        sprites.setDataNumber(sprite_tower, "tower_distance", 48)
-        sprites.setDataNumber(sprite_tower, "dart_speed", 100)
-        sprites.setDataNumber(sprite_tower, "health", 1)
-        sprites.setDataBoolean(sprite_tower, "dart_follow", false)
-        sprites.setDataBoolean(sprite_tower, "facing_left", true)
-        sprites.setDataNumber(sprite_tower, "dart_image_index", 0)
-        tower_counter += 1
-        if (!(debug)) {
-            info.changeScoreBy(-30)
+    if (overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower)) {
+        blockMenu.setColors(1, 15)
+        blockMenu.showMenu(["Cancel", "Sell"], MenuStyle.Grid, MenuLocation.BottomHalf)
+        wait_for_menu_select()
+        if (blockMenu.selectedMenuIndex() == 0) {
+        	
+        } else if (blockMenu.selectedMenuIndex() == 1) {
+            overlapping_sprite = overlapped_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower)
+            info.changeScoreBy(sprites.readDataNumber(overlapping_sprite, "sell_price"))
+            overlapping_sprite.destroy()
         }
-    } else if (!(on_valid_land_spot(sprite_cursor_pointer)) || overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower)) {
-        sprite_cursor_pointer.say("Not on valid spot!", 1000)
     } else {
-        sprite_cursor_pointer.say("Not enough money!", 1000)
+        blockMenu.setColors(1, 15)
+        // https://bloons.fandom.com/wiki/Tower_price_lists#Bloons_TD_5:~:text=%24.-,Bloons%20TD%205
+        blockMenu.showMenu(["Cancel", "Dart Monkey"], MenuStyle.Grid, MenuLocation.BottomHalf)
+        wait_for_menu_select()
+        if (blockMenu.selectedMenuIndex() == 0) {
+        	
+        } else if (blockMenu.selectedMenuIndex() == 1 && ((info.score() >= 30 || debug) && (on_valid_land_spot(sprite_cursor_pointer) && !(overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower))))) {
+            sprite_tower = sprites.create(img`
+                . . . . f f f f f . . . . . . . 
+                . . . f e e e e e f . . . . . . 
+                . . f d d d d e e e f . . . . . 
+                . c d f d d f d e e f f . . . . 
+                . c d f d d f d e e d d f . . . 
+                c d e e d d d d e e b d c . . . 
+                c d d d d c d d e e b d c . f f 
+                c c c c c d d d e e f c . f e f 
+                . f d d d d d e e f f . . f e f 
+                . . f f f f f e e e e f . f e f 
+                . . . . f e e e e e e e f f e f 
+                . . . f e f f e f e e e e f f . 
+                . . . f e f f e f e e e e f . . 
+                . . . f d b f d b f f e f . . . 
+                . . . f d d c d d b b d f . . . 
+                . . . . f f f f f f f f f . . . 
+                `, SpriteKind.Tower)
+            sprite_tower.setPosition(sprite_cursor_pointer.x, sprite_cursor_pointer.y)
+            sprites.setDataNumber(sprite_tower, "fire_dart_delay", 1000)
+            sprites.setDataNumber(sprite_tower, "tower_id", tower_counter)
+            sprites.setDataNumber(sprite_tower, "tower_distance", 48)
+            sprites.setDataNumber(sprite_tower, "sell_price", 20)
+            sprites.setDataNumber(sprite_tower, "dart_speed", 100)
+            sprites.setDataNumber(sprite_tower, "health", 1)
+            sprites.setDataBoolean(sprite_tower, "dart_follow", false)
+            sprites.setDataBoolean(sprite_tower, "facing_left", true)
+            sprites.setDataNumber(sprite_tower, "dart_image_index", 0)
+            tower_counter += 1
+            if (!(debug)) {
+                info.changeScoreBy(-30)
+            }
+        } else if (!(on_valid_land_spot(sprite_cursor_pointer))) {
+            sprite_cursor_pointer.say("Not on valid spot!", 1000)
+        } else {
+            sprite_cursor_pointer.say("Not enough money!", 1000)
+        }
     }
 })
 spriteutils.createRenderable(200, function (screen2) {
@@ -85,6 +99,14 @@ spriteutils.createRenderable(200, function (screen2) {
         }
     }
 })
+function overlapped_sprite_of_kind (sprite: Sprite, kind: number) {
+    for (let sprite2 of sprites.allOfKind(kind)) {
+        if (sprite.overlapsWith(sprite2)) {
+            return sprite2
+        }
+    }
+    return sprite
+}
 info.onCountdownEnd(function () {
     wave += 1
     display_wave = true
@@ -337,17 +359,25 @@ function set_ui_icons () {
 }
 function get_farthest_among_path_sprite_of_kind (sprite: Sprite, kind: number, max_distance: number) {
     progress = 0
-    found_sprite = false
     for (let sprite2 of sprites.allOfKind(kind)) {
         if (scene.spritePercentPathCompleted(sprite2) >= progress) {
             if (spriteutils.distanceBetween(sprite, sprite2) <= max_distance) {
                 sprite_farthest_among_path = sprite2
                 progress = scene.spritePercentPathCompleted(sprite2)
-                found_sprite = true
             }
         }
     }
     return sprite_farthest_among_path
+}
+function can_find_farthest_among_path_sprite_of_kind (sprite: Sprite, kind: number, max_distance: number) {
+    for (let sprite2 of sprites.allOfKind(kind)) {
+        if (scene.spritePercentPathCompleted(sprite2) >= progress) {
+            if (spriteutils.distanceBetween(sprite, sprite2) <= max_distance) {
+                return true
+            }
+        }
+    }
+    return false
 }
 function summon_bloon (col: number, row: number, health: number, speed: number) {
     sprite_bloon = sprites.create(bloon_image_from_health(health), SpriteKind.Enemy)
@@ -376,7 +406,6 @@ let projectile: Sprite = null
 let farthest_sprite: Sprite = null
 let sprite_bloon: Sprite = null
 let sprite_farthest_among_path: Sprite = null
-let found_sprite = false
 let progress = 0
 let bloon_images: Image[] = []
 let dart_images: Image[] = []
@@ -384,6 +413,7 @@ let bloon_path: tiles.Location[] = []
 let sprite_cursor: Sprite = null
 let menu_option_selected = false
 let sprite_tower: Sprite = null
+let overlapping_sprite: Sprite = null
 let sprite_cursor_pointer: Sprite = null
 let tower_counter = 0
 let wave_begin = false
@@ -404,7 +434,7 @@ forever(function () {
     for (let sprite of sprites.allOfKind(SpriteKind.Tower)) {
         timer.throttle(convertToText(sprites.readDataNumber(sprite, "tower_id")), sprites.readDataNumber(sprite, "fire_dart_delay"), function () {
             farthest_sprite = get_farthest_among_path_sprite_of_kind(sprite, SpriteKind.Enemy, sprites.readDataNumber(sprite, "tower_distance"))
-            if (found_sprite) {
+            if (can_find_farthest_among_path_sprite_of_kind(sprite, SpriteKind.Enemy, sprites.readDataNumber(sprite, "tower_distance"))) {
                 projectile = sprites.createProjectileFromSprite(dart_image_from_index(sprites.readDataNumber(sprite, "dart_image_index")).clone(), sprite, 0, 0)
                 projectile.setKind(SpriteKind.Projectile)
                 projectile.setFlag(SpriteFlag.AutoDestroy, false)
