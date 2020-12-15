@@ -475,7 +475,7 @@ function get_farthest_among_path_sprite_of_kind (sprite: Sprite, kind: number, m
     progress = 0
     for (let sprite2 of sprites.allOfKind(kind)) {
         if (scene.spritePercentPathCompleted(sprite2) >= progress) {
-            if (spriteutils.distanceBetween(sprite, sprite2) <= max_distance) {
+            if (spriteutils.distanceBetween(sprite, sprite2) <= max_distance || max_distance == 0) {
                 sprite_farthest_among_path = sprite2
                 progress = scene.spritePercentPathCompleted(sprite2)
             }
@@ -552,7 +552,7 @@ function dart_monkey_right_click () {
 function can_find_farthest_among_path_sprite_of_kind (sprite: Sprite, kind: number, max_distance: number) {
     for (let sprite2 of sprites.allOfKind(kind)) {
         if (scene.spritePercentPathCompleted(sprite2) >= progress) {
-            if (spriteutils.distanceBetween(sprite, sprite2) <= max_distance) {
+            if (spriteutils.distanceBetween(sprite, sprite2) <= max_distance || max_distance == 0) {
                 return true
             }
         }
