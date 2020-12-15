@@ -49,11 +49,11 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
 })
 spriteutils.createRenderable(200, function (screen2) {
     if (display_wave || false) {
-        screen2.fillRect(0, scene.screenHeight() / 2 - 30, scene.screenWidth(), 20, 15)
+        screen2.fillRect(0, scene.screenHeight() / 2 - 45, scene.screenWidth(), 20, 15)
         if (wave_begin) {
-            images.printCenter(screen2, "Wave " + wave + " begin!", scene.screenHeight() / 2 - 24, 1)
+            images.printCenter(screen2, "Wave " + wave + " begin!", scene.screenHeight() / 2 - 39, 1)
         } else {
-            images.printCenter(screen2, "Wave " + wave + " end!", scene.screenHeight() / 2 - 24, 1)
+            images.printCenter(screen2, "Wave " + wave + " end!", scene.screenHeight() / 2 - 39, 1)
         }
     }
 })
