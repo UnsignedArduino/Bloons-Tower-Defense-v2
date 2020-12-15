@@ -33,20 +33,41 @@ function overlapping_sprite_of_kind (sprite: Sprite, kind: number) {
 }
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     if (overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower)) {
+        overlapping_sprite = overlapped_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower)
         blockMenu.setColors(1, 15)
-        blockMenu.showMenu(["Cancel", "Sell"], MenuStyle.Grid, MenuLocation.BottomHalf)
+        tower_options = ["Cancel", "Sell for $" + sprites.readDataNumber(overlapping_sprite, "sell_price")]
+        if (sprites.readDataNumber(overlapping_sprite, "fire_dart_delay") > sprites.readDataNumber(overlapping_sprite, "fire_dart_delay_min")) {
+            tower_options.push("Decrease firing delay ($50) to " + (sprites.readDataNumber(overlapping_sprite, "fire_dart_delay") - 200) + " ms")
+        }
+        if (sprites.readDataNumber(overlapping_sprite, "tower_distance") < sprites.readDataNumber(overlapping_sprite, "tower_max_distance")) {
+            tower_options.push("Increase visibility ($30) to " + (sprites.readDataNumber(overlapping_sprite, "tower_distance") + 16) + " px")
+        }
+        blockMenu.showMenu(tower_options, MenuStyle.List, MenuLocation.BottomHalf)
         wait_for_menu_select()
         if (blockMenu.selectedMenuIndex() == 0) {
         	
         } else if (blockMenu.selectedMenuIndex() == 1) {
-            overlapping_sprite = overlapped_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower)
             info.changeScoreBy(sprites.readDataNumber(overlapping_sprite, "sell_price"))
             overlapping_sprite.destroy()
+        } else if (blockMenu.selectedMenuOption().includes("Decrease firing delay") && info.score() >= 50) {
+            sprites.changeDataNumberBy(overlapping_sprite, "fire_dart_delay", -200)
+            sprites.changeDataNumberBy(overlapping_sprite, "sell_price", 30)
+            if (!(debug)) {
+                info.changeScoreBy(50)
+            }
+        } else if (blockMenu.selectedMenuOption().includes("Increase visibility") && info.score() >= 30) {
+            sprites.changeDataNumberBy(overlapping_sprite, "tower_distance", 16)
+            sprites.changeDataNumberBy(overlapping_sprite, "sell_price", 20)
+            if (!(debug)) {
+                info.changeScoreBy(30)
+            }
+        } else {
+            sprite_cursor_pointer.say("Not enough money!", 1000)
         }
     } else {
         blockMenu.setColors(1, 15)
         // https://bloons.fandom.com/wiki/Tower_price_lists#Bloons_TD_5:~:text=%24.-,Bloons%20TD%205
-        blockMenu.showMenu(["Cancel", "Dart Monkey"], MenuStyle.Grid, MenuLocation.BottomHalf)
+        blockMenu.showMenu(["Cancel", "Dart Monkey"], MenuStyle.List, MenuLocation.BottomHalf)
         wait_for_menu_select()
         if (blockMenu.selectedMenuIndex() == 0) {
         	
@@ -71,8 +92,10 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
                 `, SpriteKind.Tower)
             sprite_tower.setPosition(sprite_cursor_pointer.x, sprite_cursor_pointer.y)
             sprites.setDataNumber(sprite_tower, "fire_dart_delay", 1000)
+            sprites.setDataNumber(sprite_tower, "fire_dart_delay_min", 200)
             sprites.setDataNumber(sprite_tower, "tower_id", tower_counter)
             sprites.setDataNumber(sprite_tower, "tower_distance", 48)
+            sprites.setDataNumber(sprite_tower, "tower_max_distance", 96)
             sprites.setDataNumber(sprite_tower, "sell_price", 20)
             sprites.setDataNumber(sprite_tower, "dart_speed", 150)
             sprites.setDataNumber(sprite_tower, "health", 1)
@@ -420,6 +443,7 @@ let bloon_path: tiles.Location[] = []
 let sprite_cursor: Sprite = null
 let menu_option_selected = false
 let sprite_tower: Sprite = null
+let tower_options: string[] = []
 let overlapping_sprite: Sprite = null
 let sprite_cursor_pointer: Sprite = null
 let tower_counter = 0
