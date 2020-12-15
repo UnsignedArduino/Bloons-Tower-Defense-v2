@@ -5,6 +5,7 @@ function initialize_variables () {
     wave = 0
     display_wave = false
     wave_begin = false
+    tower_counter = 0
 }
 function on_valid_land_spot (sprite: Sprite) {
     for (let tile of [myTiles.tile1, sprites.castle.tileGrass1, sprites.castle.tileGrass3, sprites.castle.tileGrass2]) {
@@ -21,6 +22,14 @@ scene.onPathCompletion(SpriteKind.Enemy, function (sprite, location) {
         info.changeLifeBy(sprites.readDataNumber(sprite, "health") * 2 * -1)
     }
 })
+function overlapping_sprite_of_kind (sprite: Sprite, kind: number) {
+    for (let sprite2 of sprites.allOfKind(kind)) {
+        if (sprite.overlapsWith(sprite2)) {
+            return true
+        }
+    }
+    return false
+}
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     blockMenu.setColors(1, 15)
     // https://bloons.fandom.com/wiki/Tower_price_lists#Bloons_TD_5:~:text=%24.-,Bloons%20TD%205
@@ -28,7 +37,7 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     wait_for_menu_select()
     if (blockMenu.selectedMenuIndex() == 0) {
     	
-    } else if (blockMenu.selectedMenuIndex() == 1 && ((info.score() >= 30 || debug) && on_valid_land_spot(sprite_cursor_pointer))) {
+    } else if (blockMenu.selectedMenuIndex() == 1 && ((info.score() >= 30 || debug) && (on_valid_land_spot(sprite_cursor_pointer) && !(overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower))))) {
         sprite_tower = sprites.create(img`
             . . . . f f f f f . . . . . . . 
             . . . f e e e e e f . . . . . . 
@@ -48,10 +57,18 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
             . . . . f f f f f f f f f . . . 
             `, SpriteKind.Tower)
         sprite_tower.setPosition(sprite_cursor_pointer.x, sprite_cursor_pointer.y)
+        sprites.setDataNumber(sprite_tower, "fire_dart_delay", 1000)
+        sprites.setDataNumber(sprite_tower, "tower_id", tower_counter)
+        sprites.setDataNumber(sprite_tower, "tower_distance", 48)
+        sprites.setDataNumber(sprite_tower, "dart_speed", 100)
+        sprites.setDataNumber(sprite_tower, "health", 1)
+        sprites.setDataBoolean(sprite_tower, "dart_follow", false)
+        sprites.setDataNumber(sprite_tower, "dart_image_index", 0)
+        tower_counter += 1
         if (!(debug)) {
             info.changeScoreBy(-30)
         }
-    } else if (!(on_valid_land_spot(sprite_cursor_pointer))) {
+    } else if (!(on_valid_land_spot(sprite_cursor_pointer)) || overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower)) {
         sprite_cursor_pointer.say("Not on valid spot!", 1000)
     } else {
         sprite_cursor_pointer.say("Not enough money!", 1000)
@@ -174,6 +191,36 @@ function set_map_field_of_flowers () {
         `, [myTiles.transparency16,sprites.castle.tilePath4,sprites.castle.tilePath6,sprites.castle.tilePath7,sprites.castle.tilePath5,sprites.castle.tilePath2,sprites.castle.tilePath3,sprites.castle.tilePath8,sprites.castle.tilePath9,sprites.castle.tilePath1,myTiles.tile1,myTiles.tile2,myTiles.tile3,myTiles.tile4,myTiles.tile5,myTiles.tile6,myTiles.tile7,myTiles.tile8,myTiles.tile9,myTiles.tile10,sprites.castle.tileGrass1,sprites.castle.tileGrass3,sprites.castle.tileGrass2,sprites.builtin.forestTiles0], TileScale.Sixteen))
     scene.setBackgroundColor(7)
 }
+function dart_image_from_index (index: number) {
+    dart_images = [img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . 5 5 5 5 5 . . . . . . 
+        . . . . . . 5 5 5 . . . . . . . 
+        . . . . . . . f . . . . . . . . 
+        . . . . . . . f . . . . . . . . 
+        . . . . . . f f f . . . . . . . 
+        . . . . . . f f f . . . . . . . 
+        . . . . . . f f f . . . . . . . 
+        . . . . . . f f f . . . . . . . 
+        . . . . . . . f . . . . . . . . 
+        . . . . . . . f . . . . . . . . 
+        . . . . . . . f . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `]
+    if (index < 0 || index > dart_images.length - 1) {
+        return img`
+            . c c c . 
+            c c c c c 
+            c c c c c 
+            c c c c c 
+            . c c c . 
+            `
+    }
+    return dart_images[index]
+}
 function bloon_image_from_health (health: number) {
     bloon_images = [img`
         . . . . . . 2 2 2 2 . . . . . . 
@@ -287,22 +334,57 @@ function set_ui_icons () {
     info.setScore(100)
     info.setLife(500)
 }
+function get_farthest_among_path_sprite_of_kind (sprite: Sprite, kind: number, max_distance: number) {
+    progress = 0
+    found_sprite = false
+    for (let sprite2 of sprites.allOfKind(kind)) {
+        if (scene.spritePercentPathCompleted(sprite2) >= progress) {
+            if (spriteutils.distanceBetween(sprite, sprite2) <= max_distance) {
+                sprite_farthest_among_path = sprite2
+                progress = scene.spritePercentPathCompleted(sprite2)
+                found_sprite = true
+            }
+        }
+    }
+    return sprite_farthest_among_path
+}
 function summon_bloon (col: number, row: number, health: number, speed: number) {
     sprite_bloon = sprites.create(bloon_image_from_health(health), SpriteKind.Enemy)
     tiles.placeOnTile(sprite_bloon, tiles.getTileLocation(col, row))
     sprites.setDataNumber(sprite_bloon, "health", health)
+    sprites.setDataNumber(sprite_bloon, "original_health", health)
     scene.followPath(sprite_bloon, bloon_path, speed)
 }
 blockMenu.onMenuOptionSelected(function (option, index) {
     menu_option_selected = true
 })
+sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
+    sprites.changeDataNumberBy(otherSprite, "health", -1)
+    sprites.changeDataNumberBy(sprite, "health", -1)
+    if (sprites.readDataNumber(otherSprite, "health") <= 0) {
+        info.changeScoreBy(sprites.readDataNumber(otherSprite, "original_health"))
+        otherSprite.destroy()
+    } else {
+        otherSprite.setImage(bloon_image_from_health(sprites.readDataNumber(otherSprite, "health")))
+    }
+    if (sprites.readDataNumber(sprite, "health") <= 0) {
+        sprite.destroy()
+    }
+})
+let projectile: Sprite = null
+let farthest_sprite: Sprite = null
 let sprite_bloon: Sprite = null
+let sprite_farthest_among_path: Sprite = null
+let found_sprite = false
+let progress = 0
 let bloon_images: Image[] = []
+let dart_images: Image[] = []
 let bloon_path: tiles.Location[] = []
 let sprite_cursor: Sprite = null
 let menu_option_selected = false
 let sprite_tower: Sprite = null
 let sprite_cursor_pointer: Sprite = null
+let tower_counter = 0
 let wave_begin = false
 let display_wave = false
 let wave = 0
@@ -316,4 +398,29 @@ start_game()
 game.onUpdate(function () {
     sprite_cursor_pointer.top = sprite_cursor.top
     sprite_cursor_pointer.left = sprite_cursor.left
+})
+forever(function () {
+    for (let sprite of sprites.allOfKind(SpriteKind.Tower)) {
+        timer.throttle(convertToText(sprites.readDataNumber(sprite, "tower_id")), sprites.readDataNumber(sprite, "fire_dart_delay"), function () {
+            farthest_sprite = get_farthest_among_path_sprite_of_kind(sprite, SpriteKind.Enemy, sprites.readDataNumber(sprite, "tower_distance"))
+            if (found_sprite) {
+                projectile = sprites.createProjectileFromSprite(dart_image_from_index(sprites.readDataNumber(sprite, "dart_image_index")).clone(), sprite, 0, 0)
+                projectile.setKind(SpriteKind.Projectile)
+                projectile.setFlag(SpriteFlag.AutoDestroy, false)
+                projectile.setFlag(SpriteFlag.DestroyOnWall, true)
+                sprites.setDataNumber(projectile, "angle", spriteutils.radiansToDegrees(spriteutils.angleFrom(projectile, farthest_sprite)) - 90)
+                sprites.setDataNumber(projectile, "dart_health", sprites.readDataNumber(sprite, "dart_health"))
+                if (sprites.readDataBoolean(sprite, "dart_follow")) {
+                    projectile.follow(farthest_sprite, sprites.readDataNumber(sprite, "dart_speed"))
+                } else {
+                    spriteutils.setVelocityAtAngle(projectile, spriteutils.angleFrom(projectile, farthest_sprite), sprites.readDataNumber(sprite, "dart_speed"))
+                }
+            }
+        })
+    }
+})
+forever(function () {
+    for (let sprite of sprites.allOfKind(SpriteKind.Projectile)) {
+        transformSprites.rotateSprite(sprite, sprites.readDataNumber(sprite, "angle"))
+    }
 })
