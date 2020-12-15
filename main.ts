@@ -5,6 +5,7 @@ function initialize_variables () {
     wave = 0
     display_wave = false
     wave_begin = false
+    starting_wave = false
     tower_counter = 0
 }
 function on_valid_land_spot (sprite: Sprite) {
@@ -73,7 +74,7 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
             sprites.setDataNumber(sprite_tower, "tower_id", tower_counter)
             sprites.setDataNumber(sprite_tower, "tower_distance", 48)
             sprites.setDataNumber(sprite_tower, "sell_price", 20)
-            sprites.setDataNumber(sprite_tower, "dart_speed", 100)
+            sprites.setDataNumber(sprite_tower, "dart_speed", 150)
             sprites.setDataNumber(sprite_tower, "health", 1)
             sprites.setDataBoolean(sprite_tower, "dart_follow", false)
             sprites.setDataBoolean(sprite_tower, "facing_left", true)
@@ -108,28 +109,34 @@ function overlapped_sprite_of_kind (sprite: Sprite, kind: number) {
     return sprite
 }
 info.onCountdownEnd(function () {
-    wave += 1
-    display_wave = true
-    wave_begin = true
-    timer.after(2000, function () {
-        display_wave = false
-    })
-    timer.background(function () {
-        for (let index = 0; index <= wave * 10 - 1; index++) {
-            summon_bloon(2, 0, Math.idiv(index, 30) + 1, Math.max(wave * 5 * (Math.idiv(index, 20) + 1), 20))
-            pause(500)
-        }
-        if (debug) {
-            info.startCountdown(3)
-        } else {
-            info.startCountdown(10)
-        }
+    if (!(starting_wave)) {
+        wave += 1
         display_wave = true
-        wave_begin = false
+        wave_begin = true
+        starting_wave = true
         timer.after(2000, function () {
             display_wave = false
         })
-    })
+        timer.background(function () {
+            info.startCountdown(wave * 10 * 0.5)
+            for (let index = 0; index <= wave * 10 - 1; index++) {
+                summon_bloon(2, 0, Math.idiv(index, 30) + 1, Math.max(wave * 5 * (Math.idiv(index, 20) + 1), 20))
+                pause(500)
+            }
+            if (debug) {
+                info.startCountdown(3)
+            } else {
+                info.startCountdown(10)
+            }
+            display_wave = true
+            wave_begin = false
+            timer.after(2000, function () {
+                display_wave = false
+            })
+        })
+    } else {
+        starting_wave = false
+    }
 })
 function wait_for_menu_select () {
     menu_option_selected = false
@@ -416,6 +423,7 @@ let sprite_tower: Sprite = null
 let overlapping_sprite: Sprite = null
 let sprite_cursor_pointer: Sprite = null
 let tower_counter = 0
+let starting_wave = false
 let wave_begin = false
 let display_wave = false
 let wave = 0
@@ -429,6 +437,11 @@ start_game()
 game.onUpdate(function () {
     sprite_cursor_pointer.top = sprite_cursor.top
     sprite_cursor_pointer.left = sprite_cursor.left
+})
+forever(function () {
+    for (let sprite of sprites.allOfKind(SpriteKind.Projectile)) {
+        transformSprites.rotateSprite(sprite, sprites.readDataNumber(sprite, "angle"))
+    }
 })
 forever(function () {
     for (let sprite of sprites.allOfKind(SpriteKind.Tower)) {
@@ -462,10 +475,5 @@ forever(function () {
                 }
             }
         })
-    }
-})
-forever(function () {
-    for (let sprite of sprites.allOfKind(SpriteKind.Projectile)) {
-        transformSprites.rotateSprite(sprite, sprites.readDataNumber(sprite, "angle"))
     }
 })
