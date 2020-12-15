@@ -63,6 +63,7 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
         sprites.setDataNumber(sprite_tower, "dart_speed", 100)
         sprites.setDataNumber(sprite_tower, "health", 1)
         sprites.setDataBoolean(sprite_tower, "dart_follow", false)
+        sprites.setDataBoolean(sprite_tower, "facing_left", true)
         sprites.setDataNumber(sprite_tower, "dart_image_index", 0)
         tower_counter += 1
         if (!(debug)) {
@@ -93,7 +94,7 @@ info.onCountdownEnd(function () {
     })
     timer.background(function () {
         for (let index = 0; index <= wave * 10 - 1; index++) {
-            summon_bloon(2, 0, Math.idiv(index, 20) + 1, Math.max(wave * 5 * (Math.idiv(index, 10) + 1), 20))
+            summon_bloon(2, 0, Math.idiv(index, 30) + 1, Math.max(wave * 5 * (Math.idiv(index, 20) + 1), 20))
             pause(500)
         }
         if (debug) {
@@ -409,6 +410,20 @@ forever(function () {
                 projectile.setFlag(SpriteFlag.AutoDestroy, false)
                 projectile.setFlag(SpriteFlag.DestroyOnWall, true)
                 sprites.setDataNumber(projectile, "angle", spriteutils.radiansToDegrees(spriteutils.angleFrom(projectile, farthest_sprite)) - 90)
+                if (debug && false) {
+                    projectile.say(sprites.readDataNumber(projectile, "angle"))
+                }
+                if (sprites.readDataNumber(projectile, "angle") < -180 || sprites.readDataNumber(projectile, "angle") > 0) {
+                    if (!(sprites.readDataBoolean(sprite, "facing_left"))) {
+                        sprites.setDataBoolean(sprite, "facing_left", true)
+                        sprite.image.flipX()
+                    }
+                } else {
+                    if (sprites.readDataBoolean(sprite, "facing_left")) {
+                        sprites.setDataBoolean(sprite, "facing_left", false)
+                        sprite.image.flipX()
+                    }
+                }
                 sprites.setDataNumber(projectile, "dart_health", sprites.readDataNumber(sprite, "dart_health"))
                 if (sprites.readDataBoolean(sprite, "dart_follow")) {
                     projectile.follow(farthest_sprite, sprites.readDataNumber(sprite, "dart_speed"))
