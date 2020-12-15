@@ -52,14 +52,16 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
         } else if (blockMenu.selectedMenuOption().includes("Decrease firing delay") && info.score() >= 50) {
             sprites.changeDataNumberBy(overlapping_sprite, "fire_dart_delay", -200)
             sprites.changeDataNumberBy(overlapping_sprite, "sell_price", 30)
+            overlapping_sprite.startEffect(effects.halo, 500)
             if (!(debug)) {
-                info.changeScoreBy(50)
+                info.changeScoreBy(-50)
             }
         } else if (blockMenu.selectedMenuOption().includes("Increase visibility") && info.score() >= 30) {
             sprites.changeDataNumberBy(overlapping_sprite, "tower_distance", 16)
             sprites.changeDataNumberBy(overlapping_sprite, "sell_price", 20)
+            overlapping_sprite.startEffect(effects.halo, 500)
             if (!(debug)) {
-                info.changeScoreBy(30)
+                info.changeScoreBy(-30)
             }
         } else {
             sprite_cursor_pointer.say("Not enough money!", 1000)
@@ -465,6 +467,47 @@ game.onUpdate(function () {
 forever(function () {
     for (let sprite of sprites.allOfKind(SpriteKind.Projectile)) {
         transformSprites.rotateSprite(sprite, sprites.readDataNumber(sprite, "angle"))
+    }
+})
+forever(function () {
+    if (overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower)) {
+        sprite_cursor.setImage(img`
+            2 . . . . . . . . . 
+            f f . . . . . . . . 
+            f 9 f . . . . . . . 
+            f 9 9 f . . . . . . 
+            f 9 9 9 f . . . . . 
+            f 9 9 9 9 f . . . . 
+            f 9 9 9 9 9 f . . . 
+            f 9 9 9 9 9 9 f . . 
+            f 9 9 9 9 9 9 9 f . 
+            f 9 9 f 9 f f f f f 
+            f 9 f f 9 f . . . . 
+            f f . . f 9 f . . . 
+            f . . . f 9 f . . . 
+            . . . . . f 9 f . . 
+            . . . . . f 9 f . . 
+            . . . . . . f . . . 
+            `)
+    } else {
+        sprite_cursor.setImage(img`
+            2 . . . . . . . . . 
+            f f . . . . . . . . 
+            f 1 f . . . . . . . 
+            f 1 1 f . . . . . . 
+            f 1 1 1 f . . . . . 
+            f 1 1 1 1 f . . . . 
+            f 1 1 1 1 1 f . . . 
+            f 1 1 1 1 1 1 f . . 
+            f 1 1 1 1 1 1 1 f . 
+            f 1 1 f 1 f f f f f 
+            f 1 f f 1 f . . . . 
+            f f . . f 1 f . . . 
+            f . . . f 1 f . . . 
+            . . . . . f 1 f . . 
+            . . . . . f 1 f . . 
+            . . . . . . f . . . 
+            `)
     }
 })
 forever(function () {
