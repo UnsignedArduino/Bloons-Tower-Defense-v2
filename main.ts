@@ -6,6 +6,14 @@ function initialize_variables () {
     display_wave = false
     wave_begin = false
 }
+function on_valid_land_spot (sprite: Sprite) {
+    for (let tile of [myTiles.tile1, sprites.castle.tileGrass1, sprites.castle.tileGrass3, sprites.castle.tileGrass2]) {
+        if (sprite.tileKindAt(TileDirection.Center, tile)) {
+            return true
+        }
+    }
+    return false
+}
 scene.onPathCompletion(SpriteKind.Enemy, function (sprite, location) {
     sprite.destroy()
     scene.cameraShake(2, 100)
@@ -20,7 +28,7 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     wait_for_menu_select()
     if (blockMenu.selectedMenuIndex() == 0) {
     	
-    } else if (blockMenu.selectedMenuIndex() == 1 && (info.score() >= 30 || debug)) {
+    } else if (blockMenu.selectedMenuIndex() == 1 && ((info.score() >= 30 || debug) && on_valid_land_spot(sprite_cursor_pointer))) {
         sprite_tower = sprites.create(img`
             . . . . f f f f f . . . . . . . 
             . . . f e e e e e f . . . . . . 
@@ -43,6 +51,8 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
         if (!(debug)) {
             info.changeScoreBy(-30)
         }
+    } else if (!(on_valid_land_spot(sprite_cursor_pointer))) {
+        sprite_cursor_pointer.say("Not on valid spot!", 1000)
     } else {
         sprite_cursor_pointer.say("Not enough money!", 1000)
     }
@@ -291,8 +301,8 @@ let bloon_images: Image[] = []
 let bloon_path: tiles.Location[] = []
 let sprite_cursor: Sprite = null
 let menu_option_selected = false
-let sprite_cursor_pointer: Sprite = null
 let sprite_tower: Sprite = null
+let sprite_cursor_pointer: Sprite = null
 let wave_begin = false
 let display_wave = false
 let wave = 0
