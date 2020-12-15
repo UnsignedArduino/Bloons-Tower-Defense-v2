@@ -14,6 +14,7 @@ function update_dart_monkey (sprite: Sprite) {
         if (can_find_farthest_among_path_sprite_of_kind(sprite, SpriteKind.Enemy, sprites.readDataNumber(sprite, "tower_distance"))) {
             projectile = summon_dart(sprites.readDataNumber(sprite, "dart_image_index"), sprite)
             sprites.setDataNumber(projectile, "angle", spriteutils.radiansToDegrees(spriteutils.angleFrom(projectile, farthest_sprite)) - 90)
+            transformSprites.rotateSprite(projectile, sprites.readDataNumber(projectile, "angle"))
             if (debug && false) {
                 projectile.say(sprites.readDataNumber(projectile, "angle"))
             }
@@ -62,7 +63,7 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     } else {
         blockMenu.setColors(1, 15)
         // https://bloons.fandom.com/wiki/Tower_price_lists#Bloons_TD_5:~:text=%24.-,Bloons%20TD%205
-        blockMenu.showMenu(["Cancel", "Dart Monkey", "Tack Shooter"], MenuStyle.List, MenuLocation.BottomHalf)
+        blockMenu.showMenu(["Cancel", "Dart Monkey ($30)", "Tack Shooter ($50)"], MenuStyle.List, MenuLocation.BottomHalf)
         wait_for_menu_select()
         if (blockMenu.selectedMenuIndex() == 0) {
         	
@@ -253,7 +254,7 @@ function flip_tower (sprite: Sprite, angle: number) {
     }
 }
 function set_map_field_of_flowers () {
-    tiles.setTilemap(tiles.createTilemap(hex`100010001601020a150a0a0a160a17140a0a0a0a1701040505050505050505050505060a0a0307070707070707070707070402140a0a160a0a0a0a170a0a0a0a1601020a140a0a17140a0a0a0d0e0e0f0a0102170a0905050505060a0c0b0b100a01020a150104070704020a0c0b0b100a01020a0a01020a1601020a13121211140102150a0102140a0102150a0a170a0a01020a1601020a17010405050505050504020a0a0102150a030707070707070707080a1401020a0a140a0a0a150a0a170a0a0a170102160a0a0a170a0a160a0a140a0a0a0104050505050505050505050505050a030707070707070707070707070707160a150a0a0a0a160a0a0a140a0a160a`, img`
+    tiles.setTilemap(tiles.createTilemap(hex`10000c001601020a150a0a0a160a17140a0a0a0a1701040505050505050505050505060a0a0307070704040707070707070402140a0a160a0a0102170a0a0a0a1601020a140a0a171401020a0d0e0e0f0a0102170a0905050504020a0c0b0b100a01020a150104070704020a0c0b0b100a01020a0a01020a1601020a13121211140102150a0102140a0102150a0a170a0a01020a1601020a17010405050505050504020a0a0102150a030707070707070707080a1401020a0a140a0a0a150a0a170a0a0a`, img`
         2 . . 2 2 2 2 2 2 2 2 2 2 2 2 2 
         2 . . . . . . . . . . . . . . 2 
         2 . . . . . . . . . . . . . . 2 
@@ -266,17 +267,9 @@ function set_map_field_of_flowers () {
         2 . . 2 2 . . . . . . . . . . 2 
         2 . . 2 2 . . . . . . . . . . 2 
         2 . . 2 2 2 2 2 2 2 2 2 2 2 2 2 
-        2 . . 2 2 2 2 2 2 2 2 2 2 2 2 2 
-        2 . . . . . . . . . . . . . . . 
-        2 . . . . . . . . . . . . . . . 
-        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
         `, [myTiles.transparency16,sprites.castle.tilePath4,sprites.castle.tilePath6,sprites.castle.tilePath7,sprites.castle.tilePath5,sprites.castle.tilePath2,sprites.castle.tilePath3,sprites.castle.tilePath8,sprites.castle.tilePath9,sprites.castle.tilePath1,myTiles.tile1,myTiles.tile2,myTiles.tile3,myTiles.tile4,myTiles.tile5,myTiles.tile6,myTiles.tile7,myTiles.tile8,myTiles.tile9,myTiles.tile10,sprites.castle.tileGrass1,sprites.castle.tileGrass3,sprites.castle.tileGrass2,sprites.builtin.forestTiles0], TileScale.Sixteen))
-    bloon_path = scene.aStar(tiles.getTileLocation(2, 0), tiles.getTileLocation(15, 13))
-    tiles.setTilemap(tiles.createTilemap(hex`100010001601020a150a0a0a160a17140a0a0a0a1701040505050505050505050505060a0a0307070707070707070707070402140a0a160a0a0a0a170a0a0a0a1601020a140a0a17140a0a0a0d0e0e0f0a0102170a0905050505060a0c0b0b100a01020a150104070704020a0c0b0b100a01020a0a01020a1601020a13121211140102150a0102140a0102150a0a170a0a01020a1601020a17010405050505050504020a0a0102150a030707070707070707080a1401020a0a140a0a0a150a0a170a0a0a170102160a0a0a170a0a160a0a140a0a0a0104050505050505050505050505050a030707070707070707070707070707160a150a0a0a0a160a0a0a140a0a160a`, img`
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
+    bloon_path = scene.aStar(tiles.getTileLocation(2, 0), tiles.getTileLocation(2, 11))
+    tiles.setTilemap(tiles.createTilemap(hex`10000c001601020a150a0a0a160a17140a0a0a0a1701040505050505050505050505060a0a0307070704040707070707070402140a0a160a0a0102170a0a0a0a1601020a140a0a171401020a0d0e0e0f0a0102170a0905050504020a0c0b0b100a01020a150104070704020a0c0b0b100a01020a0a01020a1601020a13121211140102150a0102140a0102150a0a170a0a01020a1601020a17010405050505050504020a0a0102150a030707070707070707080a1401020a0a140a0a0a150a0a170a0a0a`, img`
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
@@ -421,26 +414,29 @@ function bloon_image_from_health (health: number) {
 }
 function update_tack_shooter (sprite: Sprite) {
     timer.throttle(convertToText(sprites.readDataNumber(sprite, "tower_id")), sprites.readDataNumber(sprite, "fire_dart_delay"), function () {
-        for (let index = 0; index <= 7; index++) {
-            projectile = summon_dart(sprites.readDataNumber(sprite, "dart_image_index"), sprite)
-            sprites.setDataNumber(projectile, "angle", index * 45)
-            if (debug && false) {
-                projectile.say(sprites.readDataNumber(projectile, "angle"))
-            }
-            sprites.setDataNumber(projectile, "dart_health", sprites.readDataNumber(sprite, "dart_health"))
-            projectile.lifespan = sprites.readDataNumber(sprite, "dart_life")
-            flip_tower(sprite, sprites.readDataNumber(projectile, "angle"))
-            if (sprites.readDataBoolean(sprite, "dart_follow")) {
-                projectile.follow(farthest_sprite, sprites.readDataNumber(sprite, "dart_speed"))
-            } else {
-                spriteutils.setVelocityAtAngle(projectile, spriteutils.degreesToRadians(sprites.readDataNumber(projectile, "angle") + 90), sprites.readDataNumber(sprite, "dart_speed"))
+        if (can_find_farthest_among_path_sprite_of_kind(sprite, SpriteKind.Enemy, sprites.readDataNumber(sprite, "tower_distance"))) {
+            for (let index = 0; index <= 7; index++) {
+                projectile = summon_dart(sprites.readDataNumber(sprite, "dart_image_index"), sprite)
+                sprites.setDataNumber(projectile, "angle", index * 45)
+                transformSprites.rotateSprite(projectile, sprites.readDataNumber(projectile, "angle"))
+                if (debug && false) {
+                    projectile.say(sprites.readDataNumber(projectile, "angle"))
+                }
+                sprites.setDataNumber(projectile, "dart_health", sprites.readDataNumber(sprite, "dart_health"))
+                projectile.lifespan = sprites.readDataNumber(sprite, "dart_life")
+                flip_tower(sprite, sprites.readDataNumber(projectile, "angle"))
+                if (sprites.readDataBoolean(sprite, "dart_follow")) {
+                    projectile.follow(farthest_sprite, sprites.readDataNumber(sprite, "dart_speed"))
+                } else {
+                    spriteutils.setVelocityAtAngle(projectile, spriteutils.degreesToRadians(sprites.readDataNumber(projectile, "angle") + 90), sprites.readDataNumber(sprite, "dart_speed"))
+                }
             }
         }
     })
 }
 function set_ui_icons () {
     info.setScore(100)
-    info.setLife(500)
+    info.setLife(100)
 }
 function get_farthest_among_path_sprite_of_kind (sprite: Sprite, kind: number, max_distance: number) {
     progress = 0
@@ -587,13 +583,6 @@ start_game()
 game.onUpdate(function () {
     sprite_cursor_pointer.top = sprite_cursor.top
     sprite_cursor_pointer.left = sprite_cursor.left
-})
-forever(function () {
-    for (let sprite of sprites.allOfKind(SpriteKind.Projectile)) {
-        if (sprites.readDataString(sprite, "name") != "tack_shooter") {
-            transformSprites.rotateSprite(sprite, sprites.readDataNumber(sprite, "angle"))
-        }
-    }
 })
 forever(function () {
     if (overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower)) {
