@@ -385,24 +385,24 @@ function set_map_field_of_flowers () {
     start_x = 13
     start_y = 0
     land_tiles = [myTiles.tile1, sprites.castle.tileGrass1, sprites.castle.tileGrass3, sprites.castle.tileGrass2]
-    for (let tilemap2 of [tiles.createMap(tiles.createTilemap(hex`10000c00020101010501010102010304010e090103080c0c0c0c0c0c0c0c10010106090101060a0b0b0b0b0b0b0a09010106090401060901010101030106090102060901040609030401010101060901010609030106090101080c0c0c0a0903010609010506090101060a0b0b0b0d010106090101060901020609010101010104060905010609040106090501010301010609010206090103060a0c0c0c0c0c0c0a09010106090501070b0b0b0b0b0b0b0b0d01040f0901010401010105010103010101`, img`
+    for (let tilemap2 of [tiles.createMap(tiles.createTilemap(hex`10000c00050101040102010102010101010e090101080c0c0c0c0c0c0c0c10010206090402060a0b0b0b0b0b0b0a09050106090101060903010201010106090101060901040609010101010403060901010609010106090201080c0c0c0a0902010609020206090101060a0b0b0b0d010106090101060904010609020102010101060901010609010206090101010104030609010106090101060a0c0c0c0c0c0c0a09050406090102070b0b0b0b0b0b0b0b0d0102060f01010104010101020101020101`, img`
         2 2 2 2 2 2 2 2 2 2 2 2 2 . 2 2 
-        2 . . . . . . . . . . 2 2 . 2 2 
-        2 . 2 2 2 2 2 2 2 2 . 2 2 . 2 2 
-        2 . 2 2 2 2 2 2 2 2 . 2 2 . 2 2 
-        2 . 2 2 2 2 2 2 2 2 . 2 2 . 2 2 
-        2 . 2 2 2 2 2 2 2 2 . 2 2 . 2 2 
-        2 . 2 2 2 2 . . . . . 2 2 . 2 2 
-        2 . 2 2 2 2 . 2 2 2 2 2 2 . 2 2 
-        2 . 2 2 2 2 . 2 2 2 2 2 2 . 2 2 
-        2 . 2 2 2 2 . . . . . . . . 2 2 
-        2 . 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
-        2 . 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 . 2 2 
+        2 2 . . . . . . . . . 2 2 . 2 2 
+        2 2 . 2 2 2 2 2 2 2 . 2 2 . 2 2 
+        2 2 . 2 2 2 2 2 2 2 . 2 2 . 2 2 
+        2 2 . 2 2 2 2 2 2 2 . 2 2 . 2 2 
+        2 2 . 2 2 2 . . . . . 2 2 . 2 2 
+        2 2 . 2 2 2 . 2 2 2 2 2 2 . 2 2 
+        2 2 . 2 2 2 . 2 2 2 2 2 2 . 2 2 
+        2 2 . 2 2 2 . . . . . . . . 2 2 
+        2 2 . 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 . 2 2 2 2 2 2 2 2 2 2 2 2 2 
         `, [myTiles.transparency16,myTiles.tile1,sprites.castle.tileGrass2,sprites.builtin.forestTiles0,sprites.castle.tileGrass1,sprites.castle.tileGrass3,sprites.castle.tilePath4,sprites.castle.tilePath7,sprites.castle.tilePath1,sprites.castle.tilePath6,sprites.castle.tilePath5,sprites.castle.tilePath8,sprites.castle.tilePath2,sprites.castle.tilePath9,myTiles.tile11,myTiles.tile12,sprites.castle.tilePath3], TileScale.Sixteen))]) {
         tiles.loadMap(tilemap2)
         bloon_paths.push(scene.aStar(tiles.getTilesByType(myTiles.tile11)[0], tiles.getTilesByType(myTiles.tile12)[0]))
     }
-    tiles.setTilemap(tiles.createTilemap(hex`10000c000c0909090b0909090c090d0a090102090d0805050505050505050e09090102090901040606060606060402090901020a090102090909090d090102090c0102090a01020d0a090909090102090901020d09010209090805050504020d090102090b010209090104060606070909010209090102090c010209090909090a01020b0901020a0901020b09090d09090102090c0102090d01040505050505050402090901020b0903060606060606060607090a010209090a0909090b09090d090909`, img`
+    tiles.setTilemap(tiles.createTilemap(hex`10000c000b09090a090c09090c09090909010209090805050505050505050e090c01020a0c010406060606060604020b090102090901020d090c090909010209090102090a0102090909090a0d010209090102090901020c090805050504020c0901020c0c0102090901040606060709090102090901020a0901020c090c090909010209090102090c0102090909090a0d0102090901020909010405050505050504020b0a0102090c03060606060606060607090c01020909090a0909090c09090c0909`, img`
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
@@ -721,6 +721,57 @@ function dart_monkey_right_click () {
         sprite_cursor_pointer.say("Not enough money!", 1000)
     }
 }
+function set_map_eerie_swamp () {
+    bloon_paths = []
+    start_x = 1
+    start_y = 0
+    land_tiles = [myTiles.tile14, myTiles.tile15, sprites.builtin.forestTiles0]
+    for (let tilemap2 of [tiles.createMap(tiles.createTilemap(hex`10000c00030405020204020403010401030103010203020204010403020202040202020601020202030204030204020202040101040302020204010202020103010102040101030201040302040304010302030102040202040201020202020203030402010202020201040304020302010303020204020402020202020204020303020101030202010201040103040202020202030202040202020201040201030402010201020202010402020202020202020203020301020303020102030201030201`, img`
+        2 2 . 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 . 2 2 2 2 2 . . . 2 . . . . 
+        2 2 . 2 2 2 2 2 . 2 . . . 2 2 2 
+        2 2 . . 2 2 2 . . 2 2 2 2 2 2 2 
+        2 2 2 . 2 2 2 . 2 2 2 2 2 2 2 2 
+        2 2 2 . 2 2 2 . . . . . 2 2 2 2 
+        2 2 . . 2 2 2 2 2 2 2 . 2 2 2 2 
+        2 2 . 2 2 2 2 2 2 2 2 . 2 2 2 2 
+        2 2 . 2 2 2 2 2 2 2 2 . . . . 2 
+        2 2 . 2 . . . . 2 2 2 2 2 2 . 2 
+        2 2 . . . 2 2 . . . . . . . . 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        `, [myTiles.transparency16,sprites.builtin.forestTiles0,myTiles.tile13,myTiles.tile14,myTiles.tile15,myTiles.tile11,myTiles.tile12], TileScale.Sixteen)), tiles.createMap(tiles.createTilemap(hex`10000c00030405020204020403010401030103010203020204010403020202040202020601020202030204030204020202040101040302020204010202020103010102040101030201040302040304010302030102040202040201020202020203030402010202020201040304020302010303020204020402020202020204020303020101030202010201040103040202020202030202040202020201040201030402010201020202010402020202020202020203020301020303020102030201030201`, img`
+        2 2 . 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 . 2 2 2 2 2 . . . 2 . . . . 
+        2 2 . 2 2 2 2 2 . 2 . . . 2 2 2 
+        2 2 . . 2 2 2 . . 2 2 2 2 2 2 2 
+        2 2 2 . 2 2 2 . 2 2 2 2 2 2 2 2 
+        2 2 . . 2 2 2 . . . 2 2 2 2 2 2 
+        2 2 . 2 2 2 2 2 2 . 2 2 2 2 2 2 
+        2 2 . 2 2 . . . . . 2 2 2 2 2 2 
+        2 2 . 2 2 . 2 2 2 2 2 2 2 2 2 2 
+        2 2 . 2 . . 2 2 2 2 2 2 2 2 2 2 
+        2 2 . . . 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        `, [myTiles.transparency16,sprites.builtin.forestTiles0,myTiles.tile13,myTiles.tile14,myTiles.tile15,myTiles.tile11,myTiles.tile12], TileScale.Sixteen))]) {
+        tiles.loadMap(tilemap2)
+        bloon_paths.push(scene.aStar(tiles.getTilesByType(myTiles.tile11)[0], tiles.getTilesByType(myTiles.tile12)[0]))
+    }
+    tiles.setTilemap(tiles.createTilemap(hex`10000c00020301010103010302040304020402040102010103040302010101030101010104010101020103020103010101030404030201010103040101010402040401030404020104030201030203040201020401030101030104010101010102020301040101010104030203010201040202010103010301010101010103010202010404020101040104030402030101010101020101030101010104030104020301040104010101040301010101010101010102010204010202010401020104020104`, img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, [myTiles.transparency16,myTiles.tile13,myTiles.tile14,myTiles.tile15,sprites.builtin.forestTiles0], TileScale.Sixteen))
+    scene.setBackgroundColor(6)
+}
 function can_find_farthest_among_path_sprite_of_kind (sprite: Sprite, kind: number, max_distance: number) {
     for (let sprite2 of sprites.allOfKind(kind)) {
         if (spriteutils.distanceBetween(sprite, sprite2) <= max_distance || max_distance == 0) {
@@ -840,14 +891,18 @@ color.Black
 )
 menu_option_selected = false
 set_map_city_park()
-fade_out(2000, true)
+blockMenu.setControlsEnabled(false)
 blockMenu.setColors(1, 15)
-blockMenu.showMenu(["City Park", "Field of Flowers"], MenuStyle.List, MenuLocation.BottomHalf)
+blockMenu.showMenu(["City Park", "Field of Flowers", "Eerie Swamp"], MenuStyle.List, MenuLocation.BottomHalf)
+fade_out(2000, true)
+blockMenu.setControlsEnabled(true)
 while (!(menu_option_selected)) {
     if (blockMenu.selectedMenuIndex() == 0) {
         set_map_city_park()
     } else if (blockMenu.selectedMenuIndex() == 1) {
         set_map_field_of_flowers()
+    } else if (blockMenu.selectedMenuIndex() == 2) {
+        set_map_eerie_swamp()
     }
     pause(100)
 }
