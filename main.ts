@@ -140,6 +140,9 @@ function tack_shooter_right_click () {
     if (sprites.readDataNumber(overlapping_sprite, "dart_count") < sprites.readDataNumber(overlapping_sprite, "dart_count_max")) {
         tower_options.push("Increase tacks shot ($70) to " + (sprites.readDataNumber(overlapping_sprite, "dart_count") + 2) + " tacks")
     }
+    if (sprites.readDataNumber(overlapping_sprite, "dart_health") < sprites.readDataNumber(overlapping_sprite, "dart_health_max")) {
+        tower_options.push("Increase dart durability ($40) to " + (sprites.readDataNumber(overlapping_sprite, "dart_health") + 1) + " Bloons")
+    }
     blockMenu.showMenu(tower_options, MenuStyle.List, MenuLocation.BottomHalf)
     wait_for_menu_select()
     if (blockMenu.selectedMenuIndex() == 0) {
@@ -157,6 +160,11 @@ function tack_shooter_right_click () {
         sprites.changeDataNumberBy(overlapping_sprite, "sell_price", 45)
         overlapping_sprite.startEffect(effects.halo, 1000)
         change_score(-70)
+    } else if (blockMenu.selectedMenuOption().includes("Increase dart durability") && info.score() >= 40) {
+        sprites.changeDataNumberBy(overlapping_sprite, "dart_health", 1)
+        sprites.changeDataNumberBy(overlapping_sprite, "sell_price", 30)
+        overlapping_sprite.startEffect(effects.halo, 1000)
+        change_score(-40)
     } else {
         sprite_cursor_pointer.say("Not enough money!", 1000)
     }
@@ -682,11 +690,12 @@ function summon_tack_shooter () {
     sprites.setDataNumber(sprite_tower, "tower_distance", 40)
     sprites.setDataString(sprite_tower, "name", "tack_shooter")
     sprites.setDataNumber(sprite_tower, "sell_price", 35)
-    sprites.setDataNumber(sprite_tower, "dart_speed", 200)
+    sprites.setDataNumber(sprite_tower, "dart_speed", 150)
     sprites.setDataNumber(sprite_tower, "dart_life", 100)
     sprites.setDataNumber(sprite_tower, "dart_count", 8)
-    sprites.setDataNumber(sprite_tower, "dart_count_max", 32)
+    sprites.setDataNumber(sprite_tower, "dart_count_max", 16)
     sprites.setDataNumber(sprite_tower, "dart_health", 1)
+    sprites.setDataNumber(sprite_tower, "dart_health_max", 3)
     sprites.setDataBoolean(sprite_tower, "dart_follow", false)
     sprites.setDataNumber(sprite_tower, "dart_image_index", 1)
     tower_counter += 1
