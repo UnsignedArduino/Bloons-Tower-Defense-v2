@@ -13,19 +13,13 @@ function update_sniper_monkey (sprite: Sprite) {
     timer.throttle(convertToText(sprites.readDataNumber(sprite, "tower_id")), sprites.readDataNumber(sprite, "fire_dart_delay"), function () {
         farthest_sprite = get_strongest_among_path_sprite_of_kind(sprite, SpriteKind.Enemy, sprites.readDataNumber(sprite, "tower_distance"))
         if (can_find_strongest_among_path_sprite_of_kind(sprite, SpriteKind.Enemy, sprites.readDataNumber(sprite, "tower_distance"))) {
-            projectile = summon_dart(sprites.readDataNumber(sprite, "dart_image_index"), sprite)
-            projectile.setFlag(SpriteFlag.Invisible, !(debug) || true)
-            sprites.setDataNumber(projectile, "angle", spriteutils.radiansToDegrees(spriteutils.angleFrom(projectile, farthest_sprite)) - 90)
-            transformSprites.rotateSprite(projectile, sprites.readDataNumber(projectile, "angle"))
-            if (debug && false) {
-                projectile.say(sprites.readDataNumber(projectile, "angle"))
-            }
-            sprites.setDataNumber(projectile, "dart_health", sprites.readDataNumber(sprite, "dart_health"))
-            flip_tower(sprite, sprites.readDataNumber(projectile, "angle"))
-            if (sprites.readDataBoolean(sprite, "dart_follow")) {
-                projectile.follow(farthest_sprite, sprites.readDataNumber(sprite, "dart_speed"))
+            flip_tower(sprite, spriteutils.radiansToDegrees(spriteutils.angleFrom(sprite, farthest_sprite)) - 90)
+            sprites.changeDataNumberBy(farthest_sprite, "health", -2)
+            if (sprites.readDataNumber(farthest_sprite, "health") <= 0) {
+                info.changeScoreBy(sprites.readDataNumber(farthest_sprite, "original_health"))
+                farthest_sprite.destroy(effects.trail, 100)
             } else {
-                spriteutils.setVelocityAtAngle(projectile, spriteutils.angleFrom(projectile, farthest_sprite), sprites.readDataNumber(sprite, "dart_speed"))
+                farthest_sprite.setImage(bloon_image_from_health(sprites.readDataNumber(farthest_sprite, "health")))
             }
         }
     })
@@ -782,7 +776,7 @@ let wave_begin = false
 let display_wave = false
 let wave = 0
 let debug = false
-debug = false
+debug = true
 create_cursor()
 set_map_field_of_flowers()
 set_ui_icons()
