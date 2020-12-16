@@ -351,7 +351,9 @@ function dart_image_from_index (index: number) {
     return dart_images[Math.constrain(index, 0, dart_images.length - 1)]
 }
 function bloon_image_from_health (health: number) {
-    bloon_images = [img`
+    // https://bloons.fandom.com/wiki/Bloon#BTD_series_
+    bloon_images = [
+    img`
         . . . . . . 2 2 2 2 . . . . . . 
         . . . . . 2 2 2 2 2 2 . . . . . 
         . . . . 2 2 2 2 2 2 2 2 . . . . 
@@ -368,7 +370,8 @@ function bloon_image_from_health (health: number) {
         . . . . . . . . f . . . . . . . 
         . . . . . . . f . . . . . . . . 
         . . . . . . . f . . . . . . . . 
-        `, img`
+        `,
+    img`
         . . . . . . 9 9 9 9 . . . . . . 
         . . . . . 9 9 9 9 9 9 . . . . . 
         . . . . 9 9 9 9 9 9 9 9 . . . . 
@@ -385,7 +388,8 @@ function bloon_image_from_health (health: number) {
         . . . . . . . . f . . . . . . . 
         . . . . . . . f . . . . . . . . 
         . . . . . . . f . . . . . . . . 
-        `, img`
+        `,
+    img`
         . . . . . . 7 7 7 7 . . . . . . 
         . . . . . 7 7 7 7 7 7 . . . . . 
         . . . . 7 7 7 7 7 7 7 7 . . . . 
@@ -402,7 +406,8 @@ function bloon_image_from_health (health: number) {
         . . . . . . . . f . . . . . . . 
         . . . . . . . f . . . . . . . . 
         . . . . . . . f . . . . . . . . 
-        `, img`
+        `,
+    img`
         . . . . . . 5 5 5 5 . . . . . . 
         . . . . . 5 5 5 5 5 5 . . . . . 
         . . . . 5 5 5 5 5 5 5 5 . . . . 
@@ -419,7 +424,8 @@ function bloon_image_from_health (health: number) {
         . . . . . . . . f . . . . . . . 
         . . . . . . . f . . . . . . . . 
         . . . . . . . f . . . . . . . . 
-        `, img`
+        `,
+    img`
         . . . . . . 3 3 3 3 . . . . . . 
         . . . . . 3 3 3 3 3 3 . . . . . 
         . . . . 3 3 3 3 3 3 3 3 . . . . 
@@ -436,7 +442,62 @@ function bloon_image_from_health (health: number) {
         . . . . . . . . f . . . . . . . 
         . . . . . . . f . . . . . . . . 
         . . . . . . . f . . . . . . . . 
-        `]
+        `,
+    img`
+        . . . . . . f f f f . . . . . . 
+        . . . . . f f f f f f . . . . . 
+        . . . . f f f f f f f f . . . . 
+        . . . . f f f f f f f f . . . . 
+        . . . . f f f f f f f f . . . . 
+        . . . . f f f f f f f f . . . . 
+        . . . . . f f f f f f . . . . . 
+        . . . . . f f f f f f . . . . . 
+        . . . . . . f f f f . . . . . . 
+        . . . . . . . f f . . . . . . . 
+        . . . . . . . f . . . . . . . . 
+        . . . . . . . f . . . . . . . . 
+        . . . . . . . . f . . . . . . . 
+        . . . . . . . . f . . . . . . . 
+        . . . . . . . f . . . . . . . . 
+        . . . . . . . f . . . . . . . . 
+        `,
+    img`
+        . . . . . . 1 1 1 1 . . . . . . 
+        . . . . . 1 1 1 1 1 1 . . . . . 
+        . . . . 1 1 1 1 1 1 1 1 . . . . 
+        . . . . 1 1 1 1 1 1 1 1 . . . . 
+        . . . . 1 1 1 1 1 1 1 1 . . . . 
+        . . . . 1 1 1 1 1 1 1 1 . . . . 
+        . . . . . 1 1 1 1 1 1 . . . . . 
+        . . . . . 1 1 1 1 1 1 . . . . . 
+        . . . . . . 1 1 1 1 . . . . . . 
+        . . . . . . . 1 1 . . . . . . . 
+        . . . . . . . f . . . . . . . . 
+        . . . . . . . f . . . . . . . . 
+        . . . . . . . . f . . . . . . . 
+        . . . . . . . . f . . . . . . . 
+        . . . . . . . f . . . . . . . . 
+        . . . . . . . f . . . . . . . . 
+        `,
+    img`
+        . . . . . . a a a a . . . . . . 
+        . . . . . a a a a a a . . . . . 
+        . . . . a a a a a a a a . . . . 
+        . . . . a a a a a a a a . . . . 
+        . . . . a a a a a a a a . . . . 
+        . . . . a a a a a a a a . . . . 
+        . . . . . a a a a a a . . . . . 
+        . . . . . a a a a a a . . . . . 
+        . . . . . . a a a a . . . . . . 
+        . . . . . . . a a . . . . . . . 
+        . . . . . . . f . . . . . . . . 
+        . . . . . . . f . . . . . . . . 
+        . . . . . . . . f . . . . . . . 
+        . . . . . . . . f . . . . . . . 
+        . . . . . . . f . . . . . . . . 
+        . . . . . . . f . . . . . . . . 
+        `
+    ]
     return bloon_images[Math.constrain(health, 0, bloon_images.length) - 1]
 }
 function update_tack_shooter (sprite: Sprite) {
