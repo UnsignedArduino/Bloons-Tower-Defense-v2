@@ -6,6 +6,7 @@ function initialize_variables () {
     display_wave = false
     wave_begin = false
     starting_wave = false
+    menu_open = false
     tower_counter = 0
 }
 function update_dart_monkey (sprite: Sprite) {
@@ -52,30 +53,34 @@ function overlapping_sprite_of_kind (sprite: Sprite, kind: number) {
     return false
 }
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower)) {
-        overlapping_sprite = overlapped_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower)
-        if (sprites.readDataString(overlapping_sprite, "name") == "dart_monkey") {
-            dart_monkey_right_click()
-        }
-        if (sprites.readDataString(overlapping_sprite, "name") == "tack_shooter") {
-            tack_shooter_right_click()
-        }
-    } else {
-        blockMenu.setColors(1, 15)
-        // https://bloons.fandom.com/wiki/Tower_price_lists#Bloons_TD_5:~:text=%24.-,Bloons%20TD%205
-        blockMenu.showMenu(["Cancel", "Dart Monkey ($30)", "Tack Shooter ($50)"], MenuStyle.List, MenuLocation.BottomHalf)
-        wait_for_menu_select()
-        if (blockMenu.selectedMenuIndex() == 0) {
-        	
-        } else if (blockMenu.selectedMenuIndex() == 1 && ((info.score() >= 30 || debug) && (on_valid_land_spot(sprite_cursor_pointer) && !(overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower))))) {
-            summon_dart_monkey()
-        } else if (blockMenu.selectedMenuIndex() == 2 && ((info.score() >= 50 || debug) && (on_valid_land_spot(sprite_cursor_pointer) && !(overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower))))) {
-            summon_tack_shooter()
-        } else if (!(on_valid_land_spot(sprite_cursor_pointer))) {
-            sprite_cursor_pointer.say("Not on valid spot!", 1000)
-        } else {
-            sprite_cursor_pointer.say("Not enough money!", 1000)
-        }
+    if (!(menu_open)) {
+        timer.background(function () {
+            if (overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower)) {
+                overlapping_sprite = overlapped_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower)
+                if (sprites.readDataString(overlapping_sprite, "name") == "dart_monkey") {
+                    dart_monkey_right_click()
+                }
+                if (sprites.readDataString(overlapping_sprite, "name") == "tack_shooter") {
+                    tack_shooter_right_click()
+                }
+            } else {
+                blockMenu.setColors(1, 15)
+                // https://bloons.fandom.com/wiki/Tower_price_lists#Bloons_TD_5:~:text=%24.-,Bloons%20TD%205
+                blockMenu.showMenu(["Cancel", "Dart Monkey ($30)", "Tack Shooter ($50)"], MenuStyle.List, MenuLocation.BottomHalf)
+                wait_for_menu_select()
+                if (blockMenu.selectedMenuIndex() == 0) {
+                	
+                } else if (blockMenu.selectedMenuIndex() == 1 && ((info.score() >= 30 || debug) && (on_valid_land_spot(sprite_cursor_pointer) && !(overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower))))) {
+                    summon_dart_monkey()
+                } else if (blockMenu.selectedMenuIndex() == 2 && ((info.score() >= 50 || debug) && (on_valid_land_spot(sprite_cursor_pointer) && !(overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower))))) {
+                    summon_tack_shooter()
+                } else if (!(on_valid_land_spot(sprite_cursor_pointer))) {
+                    sprite_cursor_pointer.say("Not on valid spot!", 1000)
+                } else {
+                    sprite_cursor_pointer.say("Not enough money!", 1000)
+                }
+            }
+        })
     }
 })
 function tack_shooter_right_click () {
@@ -84,8 +89,8 @@ function tack_shooter_right_click () {
     if (sprites.readDataNumber(overlapping_sprite, "fire_dart_delay") > sprites.readDataNumber(overlapping_sprite, "fire_dart_delay_min")) {
         tower_options.push("Decrease firing delay ($50) to " + (sprites.readDataNumber(overlapping_sprite, "fire_dart_delay") - 200) + " ms")
     }
-    if (sprites.readDataNumber(overlapping_sprite, "dart_life") < sprites.readDataNumber(overlapping_sprite, "dart_life_max")) {
-        tower_options.push("Increase dart life ($30) to " + (sprites.readDataNumber(overlapping_sprite, "dart_life") + 16) + " px")
+    if (sprites.readDataNumber(overlapping_sprite, "dart_count") < sprites.readDataNumber(overlapping_sprite, "dart_count_max")) {
+        tower_options.push("Increase tacks shot ($70) to " + (sprites.readDataNumber(overlapping_sprite, "dart_count") + 2) + " tacks")
     }
     blockMenu.showMenu(tower_options, MenuStyle.List, MenuLocation.BottomHalf)
     wait_for_menu_select()
@@ -99,11 +104,11 @@ function tack_shooter_right_click () {
         sprites.changeDataNumberBy(overlapping_sprite, "sell_price", 30)
         overlapping_sprite.startEffect(effects.halo, 1000)
         change_score(-50)
-    } else if (blockMenu.selectedMenuOption().includes("Increase dart life") && info.score() >= 30) {
-        sprites.changeDataNumberBy(overlapping_sprite, "dart_life", 200)
-        sprites.changeDataNumberBy(overlapping_sprite, "sell_price", 20)
+    } else if (blockMenu.selectedMenuOption().includes("Increase tacks shot") && info.score() >= 70) {
+        sprites.changeDataNumberBy(overlapping_sprite, "dart_count", 2)
+        sprites.changeDataNumberBy(overlapping_sprite, "sell_price", 45)
         overlapping_sprite.startEffect(effects.halo, 1000)
-        change_score(-30)
+        change_score(-70)
     } else {
         sprite_cursor_pointer.say("Not enough money!", 1000)
     }
@@ -144,7 +149,11 @@ info.onCountdownEnd(function () {
         timer.background(function () {
             info.startCountdown(wave * 10 * (Math.max(1000 - wave * 100, 100) / 1000))
             for (let index = 0; index <= wave * 10 - 1; index++) {
-                summon_bloon(2, 0, Math.idiv(index, 30) + 1, Math.max(wave * 5 * (Math.idiv(index, 20) + 1), 20))
+                if (wave >= 5 && Math.percentChance(50)) {
+                    summon_bloon(2, 0, Math.idiv(index, 30) + 1, Math.max(wave * 5 * (Math.idiv(index, 20) + 1), 20), 1)
+                } else {
+                    summon_bloon(1, 0, Math.idiv(index, 30) + 1, Math.max(wave * 5 * (Math.idiv(index, 20) + 1), 20), 0)
+                }
                 pause(Math.max(1000 - wave * 100, 100))
             }
             if (debug) {
@@ -164,11 +173,13 @@ info.onCountdownEnd(function () {
 })
 function wait_for_menu_select () {
     menu_option_selected = false
+    menu_open = true
     controller.moveSprite(sprite_cursor, 0, 0)
     while (!(menu_option_selected)) {
         pause(100)
     }
     controller.moveSprite(sprite_cursor, 75, 75)
+    menu_open = false
     blockMenu.closeMenu()
 }
 function create_cursor () {
@@ -254,22 +265,38 @@ function flip_tower (sprite: Sprite, angle: number) {
     }
 }
 function set_map_field_of_flowers () {
-    tiles.setTilemap(tiles.createTilemap(hex`10000c001601020a150a0a0a160a17140a0a0a0a1701040505050505050505050505060a0a0307070704040707070707070402140a0a160a0a0102170a0a0a0a1601020a140a0a171401020a0d0e0e0f0a0102170a0905050504020a0c0b0b100a01020a150104070704020a0c0b0b100a01020a0a01020a1601020a13121211140102150a0102140a0102150a0a170a0a01020a1601020a17010405050505050504020a0a0102150a030707070707070707080a1401020a0a140a0a0a150a0a170a0a0a`, img`
-        2 . . 2 2 2 2 2 2 2 2 2 2 2 2 2 
-        2 . . . . . . . . . . . . . . 2 
-        2 . . . . . . . . . . . . . . 2 
-        2 2 2 2 2 2 2 2 2 2 2 2 2 . . 2 
-        2 2 2 2 2 2 2 2 2 2 2 2 2 . . 2 
-        2 . . . . . . 2 2 2 2 2 2 . . 2 
-        2 . . . . . . 2 2 2 2 2 2 . . 2 
-        2 . . 2 2 . . 2 2 2 2 2 2 . . 2 
-        2 . . 2 2 . . 2 2 2 2 2 2 . . 2 
-        2 . . 2 2 . . . . . . . . . . 2 
-        2 . . 2 2 . . . . . . . . . . 2 
-        2 . . 2 2 2 2 2 2 2 2 2 2 2 2 2 
-        `, [myTiles.transparency16,sprites.castle.tilePath4,sprites.castle.tilePath6,sprites.castle.tilePath7,sprites.castle.tilePath5,sprites.castle.tilePath2,sprites.castle.tilePath3,sprites.castle.tilePath8,sprites.castle.tilePath9,sprites.castle.tilePath1,myTiles.tile1,myTiles.tile2,myTiles.tile3,myTiles.tile4,myTiles.tile5,myTiles.tile6,myTiles.tile7,myTiles.tile8,myTiles.tile9,myTiles.tile10,sprites.castle.tileGrass1,sprites.castle.tileGrass3,sprites.castle.tileGrass2,sprites.builtin.forestTiles0], TileScale.Sixteen))
-    bloon_path = scene.aStar(tiles.getTileLocation(2, 0), tiles.getTileLocation(2, 11))
-    tiles.setTilemap(tiles.createTilemap(hex`10000c001601020a150a0a0a160a17140a0a0a0a1701040505050505050505050505060a0a0307070704040707070707070402140a0a160a0a0102170a0a0a0a1601020a140a0a171401020a0d0e0e0f0a0102170a0905050504020a0c0b0b100a01020a150104070704020a0c0b0b100a01020a0a01020a1601020a13121211140102150a0102140a0102150a0a170a0a01020a1601020a17010405050505050504020a0a0102150a030707070707070707080a1401020a0a140a0a0a150a0a170a0a0a`, img`
+    bloon_paths = []
+    for (let tilemap2 of [tiles.createMap(tiles.createTilemap(hex`10000c000b1712010e0101010b010c0d010f12010c0f13151515151515151515151312010110141414131314141414141413120d01010b01010f120c010101010b0f12010d01010c0d0f120104050506010f120c011115151513120103020207010f12010e0f13141413120103020207010f1201010f12010b0f12010a0909080d0f120e010f120d010f120e01010c01010f12010b0f12010c0f13151515151515131201010f120e0110141414141414141416010d181201010d0101010e01010c010101`, img`
+        2 . 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 . 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 . . . . . . . . . . . . . 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 . 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 . 2 2 
+        2 . . . . . . 2 2 2 2 2 2 . 2 2 
+        2 . 2 2 2 2 . 2 2 2 2 2 2 . 2 2 
+        2 . 2 2 2 2 . 2 2 2 2 2 2 . 2 2 
+        2 . 2 2 2 2 . 2 2 2 2 2 2 . 2 2 
+        2 . 2 2 2 2 . . . . . . . . 2 2 
+        2 . 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 . 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        `, [myTiles.transparency16,myTiles.tile1,myTiles.tile2,myTiles.tile3,myTiles.tile4,myTiles.tile5,myTiles.tile6,myTiles.tile7,myTiles.tile8,myTiles.tile9,myTiles.tile10,sprites.castle.tileGrass2,sprites.builtin.forestTiles0,sprites.castle.tileGrass1,sprites.castle.tileGrass3,sprites.castle.tilePath4,sprites.castle.tilePath7,sprites.castle.tilePath1,sprites.castle.tilePath6,sprites.castle.tilePath5,sprites.castle.tilePath8,sprites.castle.tilePath2,sprites.castle.tilePath9,myTiles.tile11,myTiles.tile12], TileScale.Sixteen)), tiles.createMap(tiles.createTilemap(hex`10000c000b0f17010e0101010b010c0d010f18010c0f13151515151515151515151312010110141414131314141414141413120d01010b01010f120c010101010b0f12010d01010c0d0f120104050506010f120c011115151513120103020207010f12010e0f13141413120103020207010f1201010f12010b0f12010a0909080d0f120e010f120d010f120e01010c01010f12010b0f12010c0f13151515151515131201010f120e0110141414141414141416010d0f1201010d0101010e01010c010101`, img`
+        2 2 . 2 2 2 2 2 2 2 2 2 2 2 . 2 
+        2 2 . . . . 2 2 2 2 2 2 2 2 . 2 
+        2 2 2 2 2 . 2 2 2 2 2 2 2 2 . 2 
+        2 2 2 2 2 . 2 2 2 2 2 2 2 2 . 2 
+        2 2 2 2 2 . 2 2 2 2 2 2 2 2 . 2 
+        2 2 2 2 2 . 2 2 2 2 2 2 2 2 . 2 
+        2 2 2 2 2 . 2 2 2 2 2 2 2 2 . 2 
+        2 2 2 2 2 . 2 2 2 2 2 2 2 2 . 2 
+        2 2 2 2 2 . 2 2 2 2 2 2 2 2 . 2 
+        2 2 2 2 2 . 2 2 2 2 2 2 2 2 . 2 
+        2 2 2 2 2 . . . . . . . . . . 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        `, [myTiles.transparency16,myTiles.tile1,myTiles.tile2,myTiles.tile3,myTiles.tile4,myTiles.tile5,myTiles.tile6,myTiles.tile7,myTiles.tile8,myTiles.tile9,myTiles.tile10,sprites.castle.tileGrass2,sprites.builtin.forestTiles0,sprites.castle.tileGrass1,sprites.castle.tileGrass3,sprites.castle.tilePath4,sprites.castle.tilePath7,sprites.castle.tilePath1,sprites.castle.tilePath6,sprites.castle.tilePath5,sprites.castle.tilePath8,sprites.castle.tilePath2,sprites.castle.tilePath9,myTiles.tile11,myTiles.tile12], TileScale.Sixteen))]) {
+        tiles.loadMap(tilemap2)
+        bloon_paths.push(scene.aStar(tiles.getTilesByType(myTiles.tile11)[0], tiles.getTilesByType(myTiles.tile12)[0]))
+    }
+    tiles.setTilemap(tiles.createTilemap(hex`10000c001501020914090909150916130901020916010405050505050505050505040209090306060604040606060606060402130909150909010216090909091501020913090916130102090c0d0d0e0901021609080505050402090b0a0a0f0901020914010406060402090b0a0a0f090102090901020915010209121111101301021409010213090102140909160909010209150102091601040505050505050402090901021409030606060606060606070913010209091309090914090916090909`, img`
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
@@ -282,7 +309,7 @@ function set_map_field_of_flowers () {
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
-        `, [myTiles.transparency16,sprites.castle.tilePath4,sprites.castle.tilePath6,sprites.castle.tilePath7,sprites.castle.tilePath5,sprites.castle.tilePath2,sprites.castle.tilePath3,sprites.castle.tilePath8,sprites.castle.tilePath9,sprites.castle.tilePath1,myTiles.tile1,myTiles.tile2,myTiles.tile3,myTiles.tile4,myTiles.tile5,myTiles.tile6,myTiles.tile7,myTiles.tile8,myTiles.tile9,myTiles.tile10,sprites.castle.tileGrass1,sprites.castle.tileGrass3,sprites.castle.tileGrass2,sprites.builtin.forestTiles0], TileScale.Sixteen))
+        `, [myTiles.transparency16,sprites.castle.tilePath4,sprites.castle.tilePath6,sprites.castle.tilePath7,sprites.castle.tilePath5,sprites.castle.tilePath2,sprites.castle.tilePath8,sprites.castle.tilePath9,sprites.castle.tilePath1,myTiles.tile1,myTiles.tile2,myTiles.tile3,myTiles.tile4,myTiles.tile5,myTiles.tile6,myTiles.tile7,myTiles.tile8,myTiles.tile9,myTiles.tile10,sprites.castle.tileGrass1,sprites.castle.tileGrass3,sprites.castle.tileGrass2,sprites.builtin.forestTiles0], TileScale.Sixteen))
     scene.setBackgroundColor(7)
 }
 function dart_image_from_index (index: number) {
@@ -415,9 +442,9 @@ function bloon_image_from_health (health: number) {
 function update_tack_shooter (sprite: Sprite) {
     timer.throttle(convertToText(sprites.readDataNumber(sprite, "tower_id")), sprites.readDataNumber(sprite, "fire_dart_delay"), function () {
         if (can_find_farthest_among_path_sprite_of_kind(sprite, SpriteKind.Enemy, sprites.readDataNumber(sprite, "tower_distance"))) {
-            for (let index = 0; index <= 7; index++) {
+            for (let index = 0; index <= sprites.readDataNumber(sprite, "dart_count") - 1; index++) {
                 projectile = summon_dart(sprites.readDataNumber(sprite, "dart_image_index"), sprite)
-                sprites.setDataNumber(projectile, "angle", index * 45)
+                sprites.setDataNumber(projectile, "angle", index * (360 / sprites.readDataNumber(sprite, "dart_count")))
                 transformSprites.rotateSprite(projectile, sprites.readDataNumber(projectile, "angle"))
                 if (debug && false) {
                     projectile.say(sprites.readDataNumber(projectile, "angle"))
@@ -473,13 +500,13 @@ function summon_tack_shooter () {
     sprites.setDataNumber(sprite_tower, "fire_dart_delay", 1000)
     sprites.setDataNumber(sprite_tower, "fire_dart_delay_min", 100)
     sprites.setDataNumber(sprite_tower, "tower_id", tower_counter)
-    sprites.setDataNumber(sprite_tower, "tower_distance", 32)
-    sprites.setDataNumber(sprite_tower, "tower_max_distance", 64)
+    sprites.setDataNumber(sprite_tower, "tower_distance", 40)
     sprites.setDataString(sprite_tower, "name", "tack_shooter")
     sprites.setDataNumber(sprite_tower, "sell_price", 35)
     sprites.setDataNumber(sprite_tower, "dart_speed", 200)
     sprites.setDataNumber(sprite_tower, "dart_life", 200)
-    sprites.setDataNumber(sprite_tower, "dart_life_max", 2000)
+    sprites.setDataNumber(sprite_tower, "dart_count", 8)
+    sprites.setDataNumber(sprite_tower, "dart_count_max", 32)
     sprites.setDataNumber(sprite_tower, "health", 1)
     sprites.setDataBoolean(sprite_tower, "dart_follow", false)
     sprites.setDataNumber(sprite_tower, "dart_image_index", 1)
@@ -531,12 +558,12 @@ function change_score (diff: number) {
         info.changeScoreBy(diff)
     }
 }
-function summon_bloon (col: number, row: number, health: number, speed: number) {
+function summon_bloon (col: number, row: number, health: number, speed: number, path: number) {
     sprite_bloon = sprites.create(bloon_image_from_health(health), SpriteKind.Enemy)
     tiles.placeOnTile(sprite_bloon, tiles.getTileLocation(col, row))
     sprites.setDataNumber(sprite_bloon, "health", health)
     sprites.setDataNumber(sprite_bloon, "original_health", health)
-    scene.followPath(sprite_bloon, bloon_path, speed)
+    scene.followPath(sprite_bloon, bloon_paths[path], speed)
 }
 blockMenu.onMenuOptionSelected(function (option, index) {
     menu_option_selected = true
@@ -559,7 +586,7 @@ let sprite_farthest_among_path: Sprite = null
 let progress = 0
 let bloon_images: Image[] = []
 let dart_images: Image[] = []
-let bloon_path: tiles.Location[] = []
+let bloon_paths: tiles.Location[][] = []
 let sprite_tower: Sprite = null
 let sprite_cursor: Sprite = null
 let menu_option_selected = false
@@ -569,12 +596,13 @@ let sprite_cursor_pointer: Sprite = null
 let projectile: Sprite = null
 let farthest_sprite: Sprite = null
 let tower_counter = 0
+let menu_open = false
 let starting_wave = false
 let wave_begin = false
 let display_wave = false
 let wave = 0
 let debug = false
-debug = false
+debug = true
 create_cursor()
 set_map_field_of_flowers()
 set_ui_icons()
