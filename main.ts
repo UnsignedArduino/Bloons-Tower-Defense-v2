@@ -782,7 +782,7 @@ let wave_begin = false
 let display_wave = false
 let wave = 0
 let debug = false
-debug = true
+debug = false
 create_cursor()
 set_map_field_of_flowers()
 set_ui_icons()
