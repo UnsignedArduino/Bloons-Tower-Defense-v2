@@ -684,7 +684,7 @@ function summon_tack_shooter () {
     sprites.setDataString(sprite_tower, "name", "tack_shooter")
     sprites.setDataNumber(sprite_tower, "sell_price", 35)
     sprites.setDataNumber(sprite_tower, "dart_speed", 200)
-    sprites.setDataNumber(sprite_tower, "dart_life", 200)
+    sprites.setDataNumber(sprite_tower, "dart_life", 100)
     sprites.setDataNumber(sprite_tower, "dart_count", 8)
     sprites.setDataNumber(sprite_tower, "dart_count_max", 32)
     sprites.setDataNumber(sprite_tower, "dart_health", 1)
