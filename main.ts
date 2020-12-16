@@ -11,15 +11,23 @@ function initialize_variables () {
 }
 function update_sniper_monkey (sprite: Sprite) {
     timer.throttle(convertToText(sprites.readDataNumber(sprite, "tower_id")), sprites.readDataNumber(sprite, "fire_dart_delay"), function () {
-        farthest_sprite = get_strongest_among_path_sprite_of_kind(sprite, SpriteKind.Enemy, sprites.readDataNumber(sprite, "tower_distance"))
-        if (can_find_strongest_among_path_sprite_of_kind(sprite, SpriteKind.Enemy, sprites.readDataNumber(sprite, "tower_distance"))) {
-            flip_tower(sprite, spriteutils.radiansToDegrees(spriteutils.angleFrom(sprite, farthest_sprite)) - 90)
-            sprites.changeDataNumberBy(farthest_sprite, "health", Math.abs(sprites.readDataNumber(sprite, "dart_health")) * -1)
-            if (sprites.readDataNumber(farthest_sprite, "health") <= 0) {
-                info.changeScoreBy(sprites.readDataNumber(farthest_sprite, "original_health"))
-                farthest_sprite.destroy(effects.trail, 100)
-            } else {
-                farthest_sprite.setImage(bloon_image_from_health(sprites.readDataNumber(farthest_sprite, "health")))
+        for (let index = 0; index < sprites.readDataNumber(sprite, "darts_shot"); index++) {
+            farthest_sprite = get_farthest_among_path_sprite_of_kind(sprite, SpriteKind.Enemy, sprites.readDataNumber(sprite, "tower_distance"))
+            if (can_find_farthest_among_path_sprite_of_kind(sprite, SpriteKind.Enemy, sprites.readDataNumber(sprite, "tower_distance"))) {
+                projectile = summon_dart(sprites.readDataNumber(sprite, "dart_image_index"), sprite)
+                sprites.setDataNumber(projectile, "angle", spriteutils.radiansToDegrees(spriteutils.angleFrom(projectile, farthest_sprite)) - 90)
+                projectile.setFlag(SpriteFlag.Invisible, !(debug) && true)
+                transformSprites.rotateSprite(projectile, sprites.readDataNumber(projectile, "angle"))
+                if (debug && false) {
+                    projectile.say(sprites.readDataNumber(projectile, "angle"))
+                }
+                sprites.setDataNumber(projectile, "dart_health", sprites.readDataNumber(sprite, "dart_health"))
+                flip_tower(sprite, sprites.readDataNumber(projectile, "angle"))
+                if (sprites.readDataBoolean(sprite, "dart_follow")) {
+                    projectile.follow(farthest_sprite, sprites.readDataNumber(sprite, "dart_speed"))
+                } else {
+                    spriteutils.setVelocityAtAngle(projectile, spriteutils.angleFrom(projectile, farthest_sprite), sprites.readDataNumber(sprite, "dart_speed"))
+                }
             }
         }
     })
@@ -61,6 +69,9 @@ function sniper_monkey_right_click () {
     if (sprites.readDataNumber(overlapping_sprite, "dart_health") < sprites.readDataNumber(overlapping_sprite, "dart_health_max")) {
         tower_options.push("Increase bullet durability ($30) to " + (sprites.readDataNumber(overlapping_sprite, "dart_health") + 1) + " px")
     }
+    if (sprites.readDataNumber(overlapping_sprite, "darts_shot") < sprites.readDataNumber(overlapping_sprite, "darts_shot_max")) {
+        tower_options.push("Increase bullets shot ($60) to " + (sprites.readDataNumber(overlapping_sprite, "darts_shot") + 1) + " bullets")
+    }
     blockMenu.showMenu(tower_options, MenuStyle.List, MenuLocation.BottomHalf)
     wait_for_menu_select()
     if (blockMenu.selectedMenuIndex() == 0) {
@@ -78,6 +89,11 @@ function sniper_monkey_right_click () {
         sprites.changeDataNumberBy(overlapping_sprite, "sell_price", 20)
         overlapping_sprite.startEffect(effects.halo, 1000)
         change_score(-30)
+    } else if (blockMenu.selectedMenuOption().includes("Increase bullets shot") && info.score() >= 60) {
+        sprites.changeDataNumberBy(overlapping_sprite, "darts_shot", 1)
+        sprites.changeDataNumberBy(overlapping_sprite, "sell_price", 45)
+        overlapping_sprite.startEffect(effects.halo, 1000)
+        change_score(-60)
     } else {
         sprite_cursor_pointer.say("Not enough money!", 1000)
     }
@@ -214,6 +230,8 @@ function summon_sniper_monkey () {
     sprites.setDataNumber(sprite_tower, "dart_speed", 500)
     sprites.setDataNumber(sprite_tower, "dart_health", 2)
     sprites.setDataNumber(sprite_tower, "dart_health_max", 6)
+    sprites.setDataNumber(sprite_tower, "darts_shot", 1)
+    sprites.setDataNumber(sprite_tower, "darts_shot_max", 3)
     sprites.setDataBoolean(sprite_tower, "dart_follow", false)
     sprites.setDataBoolean(sprite_tower, "facing_left", true)
     sprites.setDataNumber(sprite_tower, "dart_image_index", 2)
