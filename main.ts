@@ -349,6 +349,7 @@ function summon_dart_monkey () {
     sprites.setDataNumber(sprite_tower, "sell_price", 20)
     sprites.setDataNumber(sprite_tower, "dart_speed", 150)
     sprites.setDataNumber(sprite_tower, "dart_health", 1)
+    sprites.setDataNumber(sprite_tower, "dart_health_max", 5)
     sprites.setDataBoolean(sprite_tower, "dart_follow", false)
     sprites.setDataBoolean(sprite_tower, "facing_left", true)
     sprites.setDataNumber(sprite_tower, "dart_image_index", 0)
@@ -700,6 +701,9 @@ function dart_monkey_right_click () {
     if (sprites.readDataNumber(overlapping_sprite, "tower_distance") < sprites.readDataNumber(overlapping_sprite, "tower_max_distance")) {
         tower_options.push("Increase visibility ($30) to " + (sprites.readDataNumber(overlapping_sprite, "tower_distance") + 16) + " px")
     }
+    if (sprites.readDataNumber(overlapping_sprite, "dart_health") < sprites.readDataNumber(overlapping_sprite, "dart_health_max")) {
+        tower_options.push("Increase dart durability ($40) to " + (sprites.readDataNumber(overlapping_sprite, "dart_health") + 1) + " Bloons")
+    }
     blockMenu.showMenu(tower_options, MenuStyle.List, MenuLocation.BottomHalf)
     wait_for_menu_select()
     if (blockMenu.selectedMenuIndex() == 0) {
@@ -717,6 +721,11 @@ function dart_monkey_right_click () {
         sprites.changeDataNumberBy(overlapping_sprite, "sell_price", 20)
         overlapping_sprite.startEffect(effects.halo, 1000)
         change_score(-30)
+    } else if (blockMenu.selectedMenuOption().includes("Increase dart durability") && info.score() >= 40) {
+        sprites.changeDataNumberBy(overlapping_sprite, "dart_health", 1)
+        sprites.changeDataNumberBy(overlapping_sprite, "sell_price", 30)
+        overlapping_sprite.startEffect(effects.halo, 1000)
+        change_score(-40)
     } else {
         sprite_cursor_pointer.say("Not enough money!", 1000)
     }
