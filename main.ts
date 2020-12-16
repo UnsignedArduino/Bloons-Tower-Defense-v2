@@ -271,6 +271,7 @@ info.onCountdownEnd(function () {
             info.startCountdown(wave * 10 * (Math.max(1000 - wave * 100, 100) / 1000))
             for (let index = 0; index <= wave * 10 - 1; index++) {
                 bloon_path = randint(0, bloon_paths.length - 1)
+                console.log(Math.min(Math.idiv(index, 30) + 1, bloon_images.length - 1))
                 summon_bloon(start_x, start_y, Math.idiv(index, 30) + 1, Math.max(wave * 5 * (Math.idiv(index, 20) + 1), 20), bloon_path)
                 pause(Math.max(1000 - wave * 100, 100))
             }
@@ -532,6 +533,54 @@ function dart_image_from_index (index: number) {
         `]
     return dart_images[Math.constrain(index, 0, dart_images.length - 1)]
 }
+function set_map_dark_dungeon () {
+    bloon_paths = []
+    start_x = 5
+    start_y = 0
+    land_tiles = [
+    sprites.dungeon.darkGroundCenter,
+    sprites.dungeon.darkGroundNorthWest1,
+    sprites.dungeon.darkGroundEast,
+    sprites.dungeon.darkGroundSouthWest1,
+    sprites.dungeon.darkGroundSouth,
+    sprites.dungeon.darkGroundNorth,
+    sprites.dungeon.darkGroundNorthEast1,
+    sprites.dungeon.darkGroundWest,
+    sprites.dungeon.darkGroundSouthEast1
+    ]
+    for (let tilemap2 of [tiles.createMap(tiles.createTilemap(hex`10000c0003080b11130114080b13021411080b1f04090909090e1518181c0d090909092005090909090d16191a1d0e090909092106090c0e0f0e161a191d0d0c0e0e092205090d09090916191a1d0909090d092104090e0f0c0e161a191d0e0e0f0e092105090909090e16191a1d0d090909092004090c0e0e0d161a191d0e0e0c0e092106090f090909171b1b1e0909090d092205090e0d0e0e0f0c0d0f0e0e0e0f092104090909090909090909090909090920070a10120a0a0a100a101010120a1023`, img`
+        2 2 2 2 2 . 2 2 2 2 . 2 2 2 2 2 
+        2 2 2 2 2 . 2 2 2 2 . 2 2 2 2 2 
+        2 2 2 2 2 . 2 2 2 2 . 2 2 2 2 2 
+        2 2 . . . . 2 2 2 2 . . . . 2 2 
+        2 2 . 2 2 2 2 2 2 2 2 2 2 . 2 2 
+        2 2 . . . . 2 2 2 2 . . . . 2 2 
+        2 2 2 2 2 . 2 2 2 2 . 2 2 2 2 2 
+        2 2 . . . . 2 2 2 2 . . . . 2 2 
+        2 2 . 2 2 2 2 2 2 2 2 2 2 . 2 2 
+        2 2 . . . . . . . . . . . . 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        `, [myTiles.transparency16,myTiles.tile11,myTiles.tile12,sprites.dungeon.greenOuterNorthWest,sprites.dungeon.greenOuterWest0,sprites.dungeon.greenOuterWest1,sprites.dungeon.greenOuterWest2,sprites.dungeon.greenOuterSouthEast,sprites.dungeon.greenOuterNorth0,sprites.dungeon.darkGroundCenter,sprites.dungeon.greenOuterSouth1,sprites.dungeon.greenOuterNorth1,sprites.dungeon.floorDark3,sprites.dungeon.floorDark1,sprites.dungeon.floorDark0,sprites.dungeon.floorDark4,sprites.dungeon.greenOuterSouth0,sprites.dungeon.greenOuterNorth2,sprites.dungeon.greenOuterSouth2,sprites.dungeon.greenInnerSouthEast,sprites.dungeon.greenInnerSouthWest,sprites.dungeon.darkGroundNorthWest1,sprites.dungeon.darkGroundEast,sprites.dungeon.darkGroundSouthWest1,sprites.dungeon.darkGroundSouth,sprites.dungeon.hazardLava0,sprites.dungeon.hazardLava1,sprites.dungeon.darkGroundNorth,sprites.dungeon.darkGroundNorthEast1,sprites.dungeon.darkGroundWest,sprites.dungeon.darkGroundSouthEast1,sprites.dungeon.greenOuterNorthEast,sprites.dungeon.greenOuterEast0,sprites.dungeon.greenOuterEast1,sprites.dungeon.greenOuterEast2,sprites.dungeon.greenOuterSouthWest], TileScale.Sixteen))]) {
+        tiles.loadMap(tilemap2)
+        bloon_paths.push(scene.aStar(tiles.getTilesByType(myTiles.tile11)[0], tiles.getTilesByType(myTiles.tile12)[0]))
+    }
+    tiles.setTilemap(tiles.createTilemap(hex`10000c000203040e12161303041215130e0304050d01010101151b1c1c1d1601010101060c010101011614191a1e150101010107110118151715141a191e16181515010f0c011601010114191a1e0101011601070d0115171815141a191e1515171501070c010101011514191a1e1601010101060d0118151516141a191e151518150107110117010101211f1f2001010116010f0c0115161515171816171515151701070d010101010101010101010101010106090a0b100a0a0a0b0a0b0b0b100a0b08`, img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, [myTiles.transparency16,sprites.dungeon.darkGroundCenter,sprites.dungeon.greenOuterNorthWest,sprites.dungeon.greenOuterNorth0,sprites.dungeon.greenOuterNorth1,sprites.dungeon.greenOuterNorthEast,sprites.dungeon.greenOuterEast0,sprites.dungeon.greenOuterEast1,sprites.dungeon.greenOuterSouthWest,sprites.dungeon.greenOuterSouthEast,sprites.dungeon.greenOuterSouth1,sprites.dungeon.greenOuterSouth0,sprites.dungeon.greenOuterWest1,sprites.dungeon.greenOuterWest0,sprites.dungeon.greenOuterNorth2,sprites.dungeon.greenOuterEast2,sprites.dungeon.greenOuterSouth2,sprites.dungeon.greenOuterWest2,sprites.dungeon.greenInnerSouthEast,sprites.dungeon.greenInnerSouthWest,sprites.dungeon.darkGroundEast,sprites.dungeon.floorDark0,sprites.dungeon.floorDark1,sprites.dungeon.floorDark4,sprites.dungeon.floorDark3,sprites.dungeon.hazardLava0,sprites.dungeon.hazardLava1,sprites.dungeon.darkGroundNorthWest1,sprites.dungeon.darkGroundSouth,sprites.dungeon.darkGroundNorthEast1,sprites.dungeon.darkGroundWest,sprites.dungeon.darkGroundNorth,sprites.dungeon.darkGroundSouthEast1,sprites.dungeon.darkGroundSouthWest1], TileScale.Sixteen))
+    scene.setBackgroundColor(13)
+}
 function bloon_image_from_health (health: number) {
     // https://bloons.fandom.com/wiki/Bloon#BTD_series_
     bloon_images = [
@@ -680,7 +729,7 @@ function bloon_image_from_health (health: number) {
         . . . . . . . f . . . . . . . . 
         `
     ]
-    return bloon_images[Math.constrain(health, 0, bloon_images.length) - 1]
+    return bloon_images[Math.constrain(health - 1, 0, bloon_images.length - 1)]
 }
 function update_tack_shooter (sprite: Sprite) {
     timer.throttle(convertToText(sprites.readDataNumber(sprite, "tower_id")), sprites.readDataNumber(sprite, "fire_dart_delay"), function () {
@@ -935,13 +984,13 @@ sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, oth
 })
 let sprite_bloon: Sprite = null
 let progress = 0
-let bloon_images: Image[] = []
 let dart_images: Image[] = []
 let sprite_farthest_among_path: Sprite = null
 let strength = 0
 let sprite_cursor: Sprite = null
 let start_y = 0
 let start_x = 0
+let bloon_images: Image[] = []
 let bloon_paths: tiles.Location[][] = []
 let bloon_path = 0
 let sprite_tower: Sprite = null
@@ -967,7 +1016,7 @@ menu_option_selected = false
 set_map_city_park()
 blockMenu.setControlsEnabled(false)
 blockMenu.setColors(1, 15)
-blockMenu.showMenu(["City Park", "Field of Flowers", "Eerie Swamp", "Sand Castle"], MenuStyle.List, MenuLocation.BottomHalf)
+blockMenu.showMenu(["City Park", "Field of Flowers", "Eerie Swamp", "Sand Castle", "The Dark Dungeon"], MenuStyle.List, MenuLocation.BottomHalf)
 fade_out(2000, true)
 blockMenu.setControlsEnabled(true)
 while (!(menu_option_selected)) {
@@ -979,6 +1028,8 @@ while (!(menu_option_selected)) {
         set_map_eerie_swamp()
     } else if (blockMenu.selectedMenuIndex() == 3) {
         set_map_sand_castle()
+    } else if (blockMenu.selectedMenuIndex() == 4) {
+        set_map_dark_dungeon()
     }
     pause(100)
 }
