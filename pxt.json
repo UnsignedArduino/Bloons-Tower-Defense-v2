@@ -11,7 +11,8 @@
         "arcade-sprite-util": "github:jwunderl/arcade-sprite-util#v0.0.10",
         "arcade-text": "github:pelikhan/arcade-image-text#v0.0.4",
         "block-menu": "github:riknoll/arcade-custom-menu#v0.0.1",
-        "pxt-arcade-image-transform": "github:robo-technical-group/pxt-arcade-image-transform#v1.0.8"
+        "pxt-arcade-image-transform": "github:robo-technical-group/pxt-arcade-image-transform#v1.0.8",
+        "Color Fading": "github:jwunderl/pxt-color#v0.2.0"
     },
     "files": [
         "main.blocks",

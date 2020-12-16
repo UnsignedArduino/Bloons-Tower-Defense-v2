@@ -14,7 +14,7 @@ function update_sniper_monkey (sprite: Sprite) {
         farthest_sprite = get_strongest_among_path_sprite_of_kind(sprite, SpriteKind.Enemy, sprites.readDataNumber(sprite, "tower_distance"))
         if (can_find_strongest_among_path_sprite_of_kind(sprite, SpriteKind.Enemy, sprites.readDataNumber(sprite, "tower_distance"))) {
             flip_tower(sprite, spriteutils.radiansToDegrees(spriteutils.angleFrom(sprite, farthest_sprite)) - 90)
-            sprites.changeDataNumberBy(farthest_sprite, "health", -2)
+            sprites.changeDataNumberBy(farthest_sprite, "health", Math.abs(sprites.readDataNumber(sprite, "dart_health")) * -1)
             if (sprites.readDataNumber(farthest_sprite, "health") <= 0) {
                 info.changeScoreBy(sprites.readDataNumber(farthest_sprite, "original_health"))
                 farthest_sprite.destroy(effects.trail, 100)
@@ -204,8 +204,8 @@ function summon_sniper_monkey () {
     sprites.setDataString(sprite_tower, "name", "sniper_monkey")
     sprites.setDataNumber(sprite_tower, "sell_price", 30)
     sprites.setDataNumber(sprite_tower, "dart_speed", 500)
-    sprites.setDataNumber(sprite_tower, "dart_health", 1)
-    sprites.setDataNumber(sprite_tower, "dart_health_max", 5)
+    sprites.setDataNumber(sprite_tower, "dart_health", 2)
+    sprites.setDataNumber(sprite_tower, "dart_health_max", 6)
     sprites.setDataBoolean(sprite_tower, "dart_follow", false)
     sprites.setDataBoolean(sprite_tower, "facing_left", true)
     sprites.setDataNumber(sprite_tower, "dart_image_index", 2)
@@ -226,6 +226,12 @@ function summon_dart (image_index: number, sprite: Sprite) {
     projectile.setFlag(SpriteFlag.DestroyOnWall, true)
     return projectile
 }
+function fade_out (time: number, block: boolean) {
+    color.startFade(color.Black, color.originalPalette, time)
+    if (block) {
+        color.pauseUntilFadeDone()
+    }
+}
 info.onCountdownEnd(function () {
     if (!(starting_wave)) {
         wave += 1
@@ -238,13 +244,16 @@ info.onCountdownEnd(function () {
         timer.background(function () {
             info.startCountdown(wave * 10 * (Math.max(1000 - wave * 100, 100) / 1000))
             for (let index = 0; index <= wave * 10 - 1; index++) {
-                if (wave >= 5 && Math.percentChance(50)) {
-                    summon_bloon(2, 0, Math.idiv(index, 30) + 1, Math.max(wave * 5 * (Math.idiv(index, 20) + 1), 20), 1)
-                } else {
-                    summon_bloon(1, 0, Math.idiv(index, 30) + 1, Math.max(wave * 5 * (Math.idiv(index, 20) + 1), 20), 0)
-                }
+                bloon_path = randint(0, bloon_paths.length - 1)
+                summon_bloon(start_x, start_y, Math.idiv(index, 30) + 1, Math.max(wave * 5 * (Math.idiv(index, 20) + 1), 20), bloon_path)
                 pause(Math.max(1000 - wave * 100, 100))
             }
+            timer.background(function () {
+                for (let index = 0; index < Math.min(wave * 5 / 2, 50); index++) {
+                    info.changeScoreBy(2)
+                    pause(50)
+                }
+            })
             if (debug) {
                 info.startCountdown(3)
             } else {
@@ -260,6 +269,12 @@ info.onCountdownEnd(function () {
         starting_wave = false
     }
 })
+function fade_in (time: number, block: boolean) {
+    color.startFade(color.originalPalette, color.Black, time)
+    if (block) {
+        color.pauseUntilFadeDone()
+    }
+}
 function wait_for_menu_select () {
     menu_option_selected = false
     menu_open = true
@@ -367,38 +382,27 @@ function flip_tower (sprite: Sprite, angle: number) {
 }
 function set_map_field_of_flowers () {
     bloon_paths = []
+    start_x = 13
+    start_y = 0
     land_tiles = [myTiles.tile1, sprites.castle.tileGrass1, sprites.castle.tileGrass3, sprites.castle.tileGrass2]
-    for (let tilemap2 of [tiles.createMap(tiles.createTilemap(hex`10000c000b1712010e0101010b010c0d010f12010c0f13151515151515151515151312010110141414131314141414141413120d01010b01010f120c010101010b0f12010d01010c0d0f120104050506010f120c011115151513120103020207010f12010e0f13141413120103020207010f1201010f12010b0f12010a0909080d0f120e010f120d010f120e01010c01010f12010b0f12010c0f13151515151515131201010f120e0110141414141414141416010d181201010d0101010e01010c010101`, img`
-        2 . 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
-        2 . 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
-        2 . . . . . . . . . . . . . 2 2 
+    for (let tilemap2 of [tiles.createMap(tiles.createTilemap(hex`10000c00020101010501010102010304010e090103080c0c0c0c0c0c0c0c10010106090101060a0b0b0b0b0b0b0a09010106090401060901010101030106090102060901040609030401010101060901010609030106090101080c0c0c0a0903010609010506090101060a0b0b0b0d010106090101060901020609010101010104060905010609040106090501010301010609010206090103060a0c0c0c0c0c0c0a09010106090501070b0b0b0b0b0b0b0b0d01040f0901010401010105010103010101`, img`
         2 2 2 2 2 2 2 2 2 2 2 2 2 . 2 2 
-        2 2 2 2 2 2 2 2 2 2 2 2 2 . 2 2 
-        2 . . . . . . 2 2 2 2 2 2 . 2 2 
-        2 . 2 2 2 2 . 2 2 2 2 2 2 . 2 2 
+        2 . . . . . . . . . . 2 2 . 2 2 
+        2 . 2 2 2 2 2 2 2 2 . 2 2 . 2 2 
+        2 . 2 2 2 2 2 2 2 2 . 2 2 . 2 2 
+        2 . 2 2 2 2 2 2 2 2 . 2 2 . 2 2 
+        2 . 2 2 2 2 2 2 2 2 . 2 2 . 2 2 
+        2 . 2 2 2 2 . . . . . 2 2 . 2 2 
         2 . 2 2 2 2 . 2 2 2 2 2 2 . 2 2 
         2 . 2 2 2 2 . 2 2 2 2 2 2 . 2 2 
         2 . 2 2 2 2 . . . . . . . . 2 2 
         2 . 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
         2 . 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
-        `, [myTiles.transparency16,myTiles.tile1,myTiles.tile2,myTiles.tile3,myTiles.tile4,myTiles.tile5,myTiles.tile6,myTiles.tile7,myTiles.tile8,myTiles.tile9,myTiles.tile10,sprites.castle.tileGrass2,sprites.builtin.forestTiles0,sprites.castle.tileGrass1,sprites.castle.tileGrass3,sprites.castle.tilePath4,sprites.castle.tilePath7,sprites.castle.tilePath1,sprites.castle.tilePath6,sprites.castle.tilePath5,sprites.castle.tilePath8,sprites.castle.tilePath2,sprites.castle.tilePath9,myTiles.tile11,myTiles.tile12], TileScale.Sixteen)), tiles.createMap(tiles.createTilemap(hex`10000c000b0f17010e0101010b010c0d010f18010c0f13151515151515151515151312010110141414131314141414141413120d01010b01010f120c010101010b0f12010d01010c0d0f120104050506010f120c011115151513120103020207010f12010e0f13141413120103020207010f1201010f12010b0f12010a0909080d0f120e010f120d010f120e01010c01010f12010b0f12010c0f13151515151515131201010f120e0110141414141414141416010d0f1201010d0101010e01010c010101`, img`
-        2 2 . 2 2 2 2 2 2 2 2 2 2 2 . 2 
-        2 2 . . . . 2 2 2 2 2 2 2 2 . 2 
-        2 2 2 2 2 . 2 2 2 2 2 2 2 2 . 2 
-        2 2 2 2 2 . 2 2 2 2 2 2 2 2 . 2 
-        2 2 2 2 2 . 2 2 2 2 2 2 2 2 . 2 
-        2 2 2 2 2 . 2 2 2 2 2 2 2 2 . 2 
-        2 2 2 2 2 . 2 2 2 2 2 2 2 2 . 2 
-        2 2 2 2 2 . 2 2 2 2 2 2 2 2 . 2 
-        2 2 2 2 2 . 2 2 2 2 2 2 2 2 . 2 
-        2 2 2 2 2 . 2 2 2 2 2 2 2 2 . 2 
-        2 2 2 2 2 . . . . . . . . . . 2 
-        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
-        `, [myTiles.transparency16,myTiles.tile1,myTiles.tile2,myTiles.tile3,myTiles.tile4,myTiles.tile5,myTiles.tile6,myTiles.tile7,myTiles.tile8,myTiles.tile9,myTiles.tile10,sprites.castle.tileGrass2,sprites.builtin.forestTiles0,sprites.castle.tileGrass1,sprites.castle.tileGrass3,sprites.castle.tilePath4,sprites.castle.tilePath7,sprites.castle.tilePath1,sprites.castle.tilePath6,sprites.castle.tilePath5,sprites.castle.tilePath8,sprites.castle.tilePath2,sprites.castle.tilePath9,myTiles.tile11,myTiles.tile12], TileScale.Sixteen))]) {
+        `, [myTiles.transparency16,myTiles.tile1,sprites.castle.tileGrass2,sprites.builtin.forestTiles0,sprites.castle.tileGrass1,sprites.castle.tileGrass3,sprites.castle.tilePath4,sprites.castle.tilePath7,sprites.castle.tilePath1,sprites.castle.tilePath6,sprites.castle.tilePath5,sprites.castle.tilePath8,sprites.castle.tilePath2,sprites.castle.tilePath9,myTiles.tile11,myTiles.tile12,sprites.castle.tilePath3], TileScale.Sixteen))]) {
         tiles.loadMap(tilemap2)
         bloon_paths.push(scene.aStar(tiles.getTilesByType(myTiles.tile11)[0], tiles.getTilesByType(myTiles.tile12)[0]))
     }
-    tiles.setTilemap(tiles.createTilemap(hex`10000c001501020914090909150916130901020916010405050505050505050505040209090306060604040606060606060402130909150909010216090909091501020913090916130102090c0d0d0e0901021609080505050402090b0a0a0f0901020914010406060402090b0a0a0f090102090901020915010209121111101301021409010213090102140909160909010209150102091601040505050505050402090901021409030606060606060606070913010209091309090914090916090909`, img`
+    tiles.setTilemap(tiles.createTilemap(hex`10000c000c0909090b0909090c090d0a090102090d0805050505050505050e09090102090901040606060606060402090901020a090102090909090d090102090c0102090a01020d0a090909090102090901020d09010209090805050504020d090102090b010209090104060606070909010209090102090c010209090909090a01020b0901020a0901020b09090d09090102090c0102090d01040505050505050402090901020b0903060606060606060607090a010209090a0909090b09090d090909`, img`
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
@@ -411,7 +415,7 @@ function set_map_field_of_flowers () {
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
-        `, [myTiles.transparency16,sprites.castle.tilePath4,sprites.castle.tilePath6,sprites.castle.tilePath7,sprites.castle.tilePath5,sprites.castle.tilePath2,sprites.castle.tilePath8,sprites.castle.tilePath9,sprites.castle.tilePath1,myTiles.tile1,myTiles.tile2,myTiles.tile3,myTiles.tile4,myTiles.tile5,myTiles.tile6,myTiles.tile7,myTiles.tile8,myTiles.tile9,myTiles.tile10,sprites.castle.tileGrass1,sprites.castle.tileGrass3,sprites.castle.tileGrass2,sprites.builtin.forestTiles0], TileScale.Sixteen))
+        `, [myTiles.transparency16,sprites.castle.tilePath4,sprites.castle.tilePath6,sprites.castle.tilePath7,sprites.castle.tilePath5,sprites.castle.tilePath2,sprites.castle.tilePath8,sprites.castle.tilePath9,sprites.castle.tilePath1,myTiles.tile1,sprites.castle.tileGrass1,sprites.castle.tileGrass3,sprites.castle.tileGrass2,sprites.builtin.forestTiles0,sprites.castle.tilePath3], TileScale.Sixteen))
     scene.setBackgroundColor(7)
 }
 function can_find_strongest_among_path_sprite_of_kind (sprite: Sprite, kind: number, max_distance: number) {
@@ -740,6 +744,57 @@ function summon_bloon (col: number, row: number, health: number, speed: number, 
 blockMenu.onMenuOptionSelected(function (option, index) {
     menu_option_selected = true
 })
+function set_map_city_park () {
+    bloon_paths = []
+    start_x = 1
+    start_y = 0
+    land_tiles = [myTiles.tile1, sprites.castle.tileGrass1, sprites.castle.tileGrass3, sprites.castle.tileGrass2]
+    for (let tilemap2 of [tiles.createMap(tiles.createTilemap(hex`10000c000b1712010e0101010b010c0d010f12010c0f13151515151515151515151312010110141414131314141414141413120d01010b01010f120c010101010b0f12010d01010c0d0f120104050506010f120c011115151513120103020207010f12010e0f13141413120103020207010f1201010f12010b0f12010a0909080d0f120e010f120d010f120e01010c01010f12010b0f12010c0f13151515151515131201010f120e0110141414141414141416010d181201010d0101010e01010c010101`, img`
+        2 . 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 . 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 . . . . . . . . . . . . . 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 . 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 . 2 2 
+        2 . . . . . . 2 2 2 2 2 2 . 2 2 
+        2 . 2 2 2 2 . 2 2 2 2 2 2 . 2 2 
+        2 . 2 2 2 2 . 2 2 2 2 2 2 . 2 2 
+        2 . 2 2 2 2 . 2 2 2 2 2 2 . 2 2 
+        2 . 2 2 2 2 . . . . . . . . 2 2 
+        2 . 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 . 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        `, [myTiles.transparency16,myTiles.tile1,myTiles.tile2,myTiles.tile3,myTiles.tile4,myTiles.tile5,myTiles.tile6,myTiles.tile7,myTiles.tile8,myTiles.tile9,myTiles.tile10,sprites.castle.tileGrass2,sprites.builtin.forestTiles0,sprites.castle.tileGrass1,sprites.castle.tileGrass3,sprites.castle.tilePath4,sprites.castle.tilePath7,sprites.castle.tilePath1,sprites.castle.tilePath6,sprites.castle.tilePath5,sprites.castle.tilePath8,sprites.castle.tilePath2,sprites.castle.tilePath9,myTiles.tile11,myTiles.tile12], TileScale.Sixteen)), tiles.createMap(tiles.createTilemap(hex`10000c000b0f17010e0101010b010c0d010f18010c0f13151515151515151515151312010110141414131314141414141413120d01010b01010f120c010101010b0f12010d01010c0d0f120104050506010f120c011115151513120103020207010f12010e0f13141413120103020207010f1201010f12010b0f12010a0909080d0f120e010f120d010f120e01010c01010f12010b0f12010c0f13151515151515131201010f120e0110141414141414141416010d0f1201010d0101010e01010c010101`, img`
+        2 2 . 2 2 2 2 2 2 2 2 2 2 2 . 2 
+        2 2 . . . . 2 2 2 2 2 2 2 2 . 2 
+        2 2 2 2 2 . 2 2 2 2 2 2 2 2 . 2 
+        2 2 2 2 2 . 2 2 2 2 2 2 2 2 . 2 
+        2 2 2 2 2 . 2 2 2 2 2 2 2 2 . 2 
+        2 2 2 2 2 . 2 2 2 2 2 2 2 2 . 2 
+        2 2 2 2 2 . 2 2 2 2 2 2 2 2 . 2 
+        2 2 2 2 2 . 2 2 2 2 2 2 2 2 . 2 
+        2 2 2 2 2 . 2 2 2 2 2 2 2 2 . 2 
+        2 2 2 2 2 . 2 2 2 2 2 2 2 2 . 2 
+        2 2 2 2 2 . . . . . . . . . . 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        `, [myTiles.transparency16,myTiles.tile1,myTiles.tile2,myTiles.tile3,myTiles.tile4,myTiles.tile5,myTiles.tile6,myTiles.tile7,myTiles.tile8,myTiles.tile9,myTiles.tile10,sprites.castle.tileGrass2,sprites.builtin.forestTiles0,sprites.castle.tileGrass1,sprites.castle.tileGrass3,sprites.castle.tilePath4,sprites.castle.tilePath7,sprites.castle.tilePath1,sprites.castle.tilePath6,sprites.castle.tilePath5,sprites.castle.tilePath8,sprites.castle.tilePath2,sprites.castle.tilePath9,myTiles.tile11,myTiles.tile12], TileScale.Sixteen))]) {
+        tiles.loadMap(tilemap2)
+        bloon_paths.push(scene.aStar(tiles.getTilesByType(myTiles.tile11)[0], tiles.getTilesByType(myTiles.tile12)[0]))
+    }
+    tiles.setTilemap(tiles.createTilemap(hex`10000c001501020914090909150916130901020916010405050505050505050505040209090306060604040606060606060402130909150909010216090909091501020913090916130102090c0d0d0e0901021609080505050402090b0a0a0f0901020914010406060402090b0a0a0f090102090901020915010209121111101301021409010213090102140909160909010209150102091601040505050505050402090901021409030606060606060606070913010209091309090914090916090909`, img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, [myTiles.transparency16,sprites.castle.tilePath4,sprites.castle.tilePath6,sprites.castle.tilePath7,sprites.castle.tilePath5,sprites.castle.tilePath2,sprites.castle.tilePath8,sprites.castle.tilePath9,sprites.castle.tilePath1,myTiles.tile1,myTiles.tile2,myTiles.tile3,myTiles.tile4,myTiles.tile5,myTiles.tile6,myTiles.tile7,myTiles.tile8,myTiles.tile9,myTiles.tile10,sprites.castle.tileGrass1,sprites.castle.tileGrass3,sprites.castle.tileGrass2,sprites.builtin.forestTiles0], TileScale.Sixteen))
+    scene.setBackgroundColor(7)
+}
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
     sprites.changeDataNumberBy(otherSprite, "health", -1)
     sprites.changeDataNumberBy(sprite, "dart_health", -1)
@@ -757,11 +812,13 @@ let sprite_bloon: Sprite = null
 let progress = 0
 let bloon_images: Image[] = []
 let dart_images: Image[] = []
-let bloon_paths: tiles.Location[][] = []
 let sprite_farthest_among_path: Sprite = null
 let strength = 0
 let sprite_cursor: Sprite = null
-let menu_option_selected = false
+let start_y = 0
+let start_x = 0
+let bloon_paths: tiles.Location[][] = []
+let bloon_path = 0
 let sprite_tower: Sprite = null
 let sprite_cursor_pointer: Sprite = null
 let overlapping_sprite: Sprite = null
@@ -775,13 +832,32 @@ let starting_wave = false
 let wave_begin = false
 let display_wave = false
 let wave = 0
+let menu_option_selected = false
 let debug = false
 debug = true
+color.setPalette(
+color.Black
+)
+menu_option_selected = false
+set_map_city_park()
+fade_out(2000, true)
+blockMenu.setColors(1, 15)
+blockMenu.showMenu(["City Park", "Field of Flowers"], MenuStyle.List, MenuLocation.BottomHalf)
+while (!(menu_option_selected)) {
+    if (blockMenu.selectedMenuIndex() == 0) {
+        set_map_city_park()
+    } else if (blockMenu.selectedMenuIndex() == 1) {
+        set_map_field_of_flowers()
+    }
+    pause(100)
+}
+blockMenu.closeMenu()
+fade_in(2000, true)
 create_cursor()
-set_map_field_of_flowers()
 set_ui_icons()
 initialize_variables()
 start_game()
+fade_out(2000, false)
 game.onUpdate(function () {
     sprite_cursor_pointer.top = sprite_cursor.top
     sprite_cursor_pointer.left = sprite_cursor.left
