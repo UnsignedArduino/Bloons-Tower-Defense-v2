@@ -312,6 +312,44 @@ function wait_for_menu_select () {
     menu_open = false
     blockMenu.closeMenu()
 }
+function set_map_sand_castle () {
+    bloon_paths = []
+    start_x = 0
+    start_y = 1
+    land_tiles = [sprites.castle.tilePath5, myTiles.tile16, myTiles.tile17]
+    for (let tilemap2 of [tiles.createMap(tiles.createTilemap(hex`10000c0001010104070708050104070707050101020606060b0b0b0501040708070501010101010407090b0606060b0b0b050101010101040807070501040a070b05010101010104070b0b0606060b0b0b05010101010104090b0705010407070705010101010104070b0b0606060b0b0705010101010104070707050104070b08050101010101040b0b0b0606060b0b07050101010101040b0a07050104070707050101010101040b0b0b0606060b0b0b06060301010104080707050104070707050101`, img`
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        . . . . . . . 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 2 2 . . . . . . . 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 . 2 2 2 
+        2 2 2 2 2 . . . . . . . . 2 2 2 
+        2 2 2 2 2 . 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 2 . . . . . . . 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 . 2 2 2 2 
+        2 2 2 2 . . . . . . . . 2 2 2 2 
+        2 2 2 2 . 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 . . . . . . . . . . . . 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        `, [myTiles.transparency16,myTiles.tile2,myTiles.tile11,myTiles.tile12,myTiles.tile16,myTiles.tile17,myTiles.tile18,sprites.castle.tilePath5,sprites.castle.rock2,sprites.castle.rock1,sprites.castle.rock0,myTiles.tile19], TileScale.Sixteen))]) {
+        tiles.loadMap(tilemap2)
+        bloon_paths.push(scene.aStar(tiles.getTilesByType(myTiles.tile11)[0], tiles.getTilesByType(myTiles.tile12)[0]))
+    }
+    tiles.setTilemap(tiles.createTilemap(hex`10000c00010101040202080501040202020501010606060609090905010402080205010101010104020709060606090909050101010101040802020501040302090501010101010402090906060609090905010101010104070902050104020202050101010101040209090606060909020501010101010402020205010402090805010101010104090909060606090902050101010101040903020501040202020501010101010409090906060609090906060601010104080202050104020202050101`, img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, [myTiles.transparency16,myTiles.tile2,sprites.castle.tilePath5,sprites.castle.rock0,myTiles.tile16,myTiles.tile17,myTiles.tile18,sprites.castle.rock1,sprites.castle.rock2,myTiles.tile19], TileScale.Sixteen))
+    scene.setBackgroundColor(13)
+}
 function create_cursor () {
     sprite_cursor = sprites.create(img`
         2 . . . . . . . . . 
@@ -929,7 +967,7 @@ menu_option_selected = false
 set_map_city_park()
 blockMenu.setControlsEnabled(false)
 blockMenu.setColors(1, 15)
-blockMenu.showMenu(["City Park", "Field of Flowers", "Eerie Swamp"], MenuStyle.List, MenuLocation.BottomHalf)
+blockMenu.showMenu(["City Park", "Field of Flowers", "Eerie Swamp", "Sand Castle"], MenuStyle.List, MenuLocation.BottomHalf)
 fade_out(2000, true)
 blockMenu.setControlsEnabled(true)
 while (!(menu_option_selected)) {
@@ -939,6 +977,8 @@ while (!(menu_option_selected)) {
         set_map_field_of_flowers()
     } else if (blockMenu.selectedMenuIndex() == 2) {
         set_map_eerie_swamp()
+    } else if (blockMenu.selectedMenuIndex() == 3) {
+        set_map_sand_castle()
     }
     pause(100)
 }
