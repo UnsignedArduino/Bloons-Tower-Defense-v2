@@ -446,6 +446,57 @@ function flip_tower (sprite: Sprite, angle: number) {
         }
     }
 }
+function set_map_figure_eights () {
+    bloon_paths = []
+    start_x = 0
+    start_y = 1
+    land_tiles = [myTiles.tile1, sprites.castle.tileGrass1, sprites.castle.tileGrass3, sprites.castle.tileGrass2]
+    for (let tilemap2 of [tiles.createMap(tiles.createTilemap(hex`10000c000503010102010301010201030104010206090809080908090808080809081001010a010a020a040a141516030a050a01010b080f010b080f131217040b080f03010a020a010a010a1a1918020a010a01040c080e080e080e080808080e080f0101020101040103050101020304010a02030d0809080908090808080809080f01010a050a020a050a021415160a020a03010a020a010a010a031a19180a010a01070e080e080e080e080808080e08110101050101030201010103040101030104`, img`
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        . . . . 2 . . . . . . . . . . 2 
+        2 2 2 . 2 . 2 2 2 2 2 2 2 2 . 2 
+        2 . . . 2 . . . 2 2 2 2 . . . 2 
+        2 . 2 2 2 2 2 . 2 2 2 2 . 2 2 2 
+        2 . . . . . . . 2 2 2 2 . . . 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 . 2 
+        2 2 2 . . . 2 . . . . . . 2 . 2 
+        2 2 2 . 2 . 2 . 2 2 2 2 . 2 . 2 
+        2 2 2 . 2 . 2 . 2 2 2 2 . 2 . 2 
+        . . . . 2 . . . 2 2 2 2 . . . 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        `, [myTiles.transparency16,myTiles.tile1,sprites.castle.tileGrass2,sprites.builtin.forestTiles0,sprites.castle.tileGrass1,sprites.castle.tileGrass3,myTiles.tile11,myTiles.tile12,sprites.vehicle.roadHorizontal,sprites.vehicle.roadIntersection3,sprites.vehicle.roadVertical,sprites.vehicle.roadIntersection2,sprites.vehicle.roadTurn3,sprites.vehicle.roadTurn1,sprites.vehicle.roadIntersection1,sprites.vehicle.roadIntersection4,sprites.vehicle.roadTurn2,sprites.vehicle.roadTurn4,myTiles.tile2,myTiles.tile3,myTiles.tile4,myTiles.tile5,myTiles.tile6,myTiles.tile7,myTiles.tile8,myTiles.tile9,myTiles.tile10], TileScale.Sixteen)), tiles.createMap(tiles.createTilemap(hex`10000c000503010102010301010201030104010206090809080908090808080809081001010a010a020a040a141516030a050a01010b080f010b080f131217040b080f03010a020a010a010a1a1918020a010a01040c080e080e080e080808080e080f0101020101040103050101020304010a02030d0809080908090808080809080f01010a050a020a050a021415160a020a03010a020a010a010a031a19180a010a01070e080e080e080e080808080e08110101050101030201010103040101030104`, img`
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        . . 2 . . . . . 2 2 2 2 . . . 2 
+        2 . 2 . 2 2 2 . 2 2 2 2 . 2 . 2 
+        2 . 2 . 2 . . . 2 2 2 2 . 2 . 2 
+        2 . 2 . 2 . 2 2 2 2 2 2 . 2 . 2 
+        2 . . . 2 . . . . . . . . 2 . 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 . 2 
+        2 . . . 2 . . . 2 2 2 2 . . . 2 
+        2 . 2 . 2 . 2 . 2 2 2 2 . 2 2 2 
+        2 . 2 . 2 . 2 . 2 2 2 2 . 2 2 2 
+        . . 2 . . . 2 . . . . . . 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        `, [myTiles.transparency16,myTiles.tile1,sprites.castle.tileGrass2,sprites.builtin.forestTiles0,sprites.castle.tileGrass1,sprites.castle.tileGrass3,myTiles.tile11,myTiles.tile12,sprites.vehicle.roadHorizontal,sprites.vehicle.roadIntersection3,sprites.vehicle.roadVertical,sprites.vehicle.roadIntersection2,sprites.vehicle.roadTurn3,sprites.vehicle.roadTurn1,sprites.vehicle.roadIntersection1,sprites.vehicle.roadIntersection4,sprites.vehicle.roadTurn2,sprites.vehicle.roadTurn4,myTiles.tile2,myTiles.tile3,myTiles.tile4,myTiles.tile5,myTiles.tile6,myTiles.tile7,myTiles.tile8,myTiles.tile9,myTiles.tile10], TileScale.Sixteen))]) {
+        tiles.loadMap(tilemap2)
+        bloon_paths.push(scene.aStar(tiles.getTilesByType(myTiles.tile11)[0], tiles.getTilesByType(myTiles.tile12)[0]))
+    }
+    tiles.setTilemap(tiles.createTilemap(hex`10000c000305010104010501010401050102010407080708070807080707070708070e01010601060406020612131405060306010109070a0109070a1110150209070a0501060406010601061817160406010601020b070c070c070c070707070c070a0101040101020105030101040502010604050f0708070807080707070708070a010106030604060306041213140604060501060406010601060518171606010601070c070c070c070c070707070c070d0101030101050401010105020101050102`, img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, [myTiles.transparency16,myTiles.tile1,sprites.castle.tileGrass1,sprites.castle.tileGrass3,sprites.castle.tileGrass2,sprites.builtin.forestTiles0,sprites.vehicle.roadVertical,sprites.vehicle.roadHorizontal,sprites.vehicle.roadIntersection3,sprites.vehicle.roadIntersection2,sprites.vehicle.roadIntersection4,sprites.vehicle.roadTurn3,sprites.vehicle.roadIntersection1,sprites.vehicle.roadTurn4,sprites.vehicle.roadTurn2,sprites.vehicle.roadTurn1,myTiles.tile2,myTiles.tile3,myTiles.tile4,myTiles.tile5,myTiles.tile6,myTiles.tile7,myTiles.tile8,myTiles.tile9,myTiles.tile10], TileScale.Sixteen))
+    scene.setBackgroundColor(7)
+}
 function set_map_field_of_flowers () {
     bloon_paths = []
     start_x = 13
@@ -1016,7 +1067,14 @@ menu_option_selected = false
 set_map_city_park()
 blockMenu.setControlsEnabled(false)
 blockMenu.setColors(1, 15)
-blockMenu.showMenu(["City Park", "Field of Flowers", "Eerie Swamp", "Sand Castle", "The Dark Dungeon"], MenuStyle.List, MenuLocation.BottomHalf)
+blockMenu.showMenu([
+"City Park",
+"Field of Flowers",
+"Eerie Swamp",
+"Sand Castle",
+"The Dark Dungeon",
+"Figure Eights (And Zeros)"
+], MenuStyle.Grid, MenuLocation.BottomHalf)
 fade_out(2000, true)
 blockMenu.setControlsEnabled(true)
 while (!(menu_option_selected)) {
@@ -1030,6 +1088,8 @@ while (!(menu_option_selected)) {
         set_map_sand_castle()
     } else if (blockMenu.selectedMenuIndex() == 4) {
         set_map_dark_dungeon()
+    } else if (blockMenu.selectedMenuIndex() == 5) {
+        set_map_figure_eights()
     }
     pause(100)
 }
