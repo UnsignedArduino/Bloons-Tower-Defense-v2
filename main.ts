@@ -268,12 +268,21 @@ info.onCountdownEnd(function () {
             display_wave = false
         })
         timer.background(function () {
-            info.startCountdown(wave * 10 * (Math.max(1000 - wave * 100, 100) / 1000))
+            if (wave / 3 == Math.idiv(wave, 3)) {
+                info.startCountdown(wave * 10 * (50 / 1000))
+            } else {
+                info.startCountdown(wave * 10 * (Math.max(1000 - wave * 100, 100) / 1000))
+            }
             for (let index = 0; index <= wave * 10 - 1; index++) {
                 bloon_path = randint(0, bloon_paths.length - 1)
                 console.log(Math.min(Math.idiv(index, 30) + 1, bloon_images.length - 1))
                 summon_bloon(start_x, start_y, Math.idiv(index, 30) + 1, Math.max(wave * 5 * (Math.idiv(index, 20) + 1), 20), bloon_path)
-                pause(Math.max(1000 - wave * 100, 100))
+                console.log(wave / 3 == Math.idiv(wave, 3))
+                if (wave / 3 == Math.idiv(wave, 3)) {
+                    pause(50)
+                } else {
+                    pause(Math.max(1000 - wave * 100, 50))
+                }
             }
             timer.background(function () {
                 for (let index = 0; index < Math.min(wave * 5 / 2, 50); index++) {
