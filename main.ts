@@ -114,7 +114,7 @@ function overlapping_sprite_of_kind (sprite: Sprite, kind: number) {
     return false
 }
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (!(menu_open)) {
+    if (!(menu_open) && game_started) {
         timer.background(function () {
             if (overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower)) {
                 overlapping_sprite = overlapped_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower)
@@ -1207,6 +1207,7 @@ let starting_wave = false
 let wave_begin = false
 let display_wave = false
 let wave = 0
+let game_started = false
 let menu_option_selected = false
 let debug = false
 debug = true
@@ -1214,6 +1215,7 @@ color.setPalette(
 color.Black
 )
 menu_option_selected = false
+game_started = false
 set_map_city_park()
 blockMenu.setControlsEnabled(false)
 blockMenu.setColors(1, 15)
@@ -1251,6 +1253,7 @@ set_ui_icons()
 initialize_variables()
 start_game()
 fade_out(2000, false)
+game_started = true
 game.onUpdate(function () {
     sprite_cursor_pointer.top = sprite_cursor.top
     sprite_cursor_pointer.left = sprite_cursor.left
