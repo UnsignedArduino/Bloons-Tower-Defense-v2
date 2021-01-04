@@ -252,6 +252,14 @@ function summon_dart (image_index: number, sprite: Sprite) {
     projectile.setFlag(SpriteFlag.DestroyOnWall, true)
     return projectile
 }
+function on_valid_water_spot (sprite: Sprite) {
+    for (let tile of water_tiles) {
+        if (sprite.tileKindAt(TileDirection.Center, tile)) {
+            return true
+        }
+    }
+    return false
+}
 function fade_out (time: number, block: boolean) {
     color.startFade(color.Black, color.originalPalette, time)
     if (block) {
@@ -1071,13 +1079,13 @@ let progress = 0
 let dart_images: Image[] = []
 let sprite_farthest_among_path: Sprite = null
 let strength = 0
-let water_tiles: Image[] = []
 let sprite_cursor: Sprite = null
 let start_y = 0
 let start_x = 0
 let bloon_images: Image[] = []
 let bloon_paths: tiles.Location[][] = []
 let bloon_path = 0
+let water_tiles: Image[] = []
 let sprite_tower: Sprite = null
 let sprite_cursor_pointer: Sprite = null
 let overlapping_sprite: Sprite = null
