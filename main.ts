@@ -138,10 +138,8 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
                     summon_tack_shooter()
                 } else if (blockMenu.selectedMenuIndex() == 3 && ((info.score() >= 40 || debug) && (on_valid_land_spot(sprite_cursor_pointer) && !(overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower))))) {
                     summon_sniper_monkey()
-                } else if (!(on_valid_land_spot(sprite_cursor_pointer))) {
-                    sprite_cursor_pointer.say("Not on valid spot!", 1000)
                 } else {
-                    sprite_cursor_pointer.say("Not enough money!", 1000)
+                    sprite_cursor_pointer.say("Not on a valid spot or not enough money!", 2000)
                 }
             }
         })
