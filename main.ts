@@ -124,11 +124,13 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
                     tack_shooter_right_click()
                 } else if (sprites.readDataString(overlapping_sprite, "name") == "sniper_monkey") {
                     sniper_monkey_right_click()
+                } else if (sprites.readDataString(overlapping_sprite, "name") == "monkey_buccaneer") {
+                    monkey_buccaneer_right_click()
                 }
             } else {
                 blockMenu.setColors(1, 15)
                 // https://bloons.fandom.com/wiki/Tower_price_lists#Bloons_TD_5:~:text=%24.-,Bloons%20TD%205
-                blockMenu.showMenu(["Cancel", "Dart Monkey ($30)", "Tack Shooter ($50)", "Sniper Monkey ($40)"], MenuStyle.List, MenuLocation.BottomHalf)
+                blockMenu.showMenu(["Cancel", "Dart Monkey ($30)", "Tack Shooter ($50)", "Sniper Monkey ($40)", "Monkey Buccaneer ($60)"], MenuStyle.List, MenuLocation.BottomHalf)
                 wait_for_menu_select()
                 if (blockMenu.selectedMenuIndex() == 0) {
                 	
@@ -138,6 +140,8 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
                     summon_tack_shooter()
                 } else if (blockMenu.selectedMenuIndex() == 3 && ((info.score() >= 40 || debug) && (on_valid_land_spot(sprite_cursor_pointer) && !(overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower))))) {
                     summon_sniper_monkey()
+                } else if (blockMenu.selectedMenuIndex() == 4 && ((info.score() >= 60 || debug) && (on_valid_water_spot(sprite_cursor_pointer) && !(overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower))))) {
+                    summon_monkey_buccaneer()
                 } else {
                     sprite_cursor_pointer.say("Not on a valid spot or not enough money!", 2000)
                 }
@@ -270,8 +274,8 @@ function summon_monkey_buccaneer () {
     sprites.setDataNumber(sprite_tower, "dart_speed", 150)
     sprites.setDataNumber(sprite_tower, "dart_health", 2)
     sprites.setDataNumber(sprite_tower, "dart_health_max", 4)
-    sprites.setDataNumber(sprite_tower, "darts_shot", 2)
-    sprites.setDataNumber(sprite_tower, "darts_shot_max", 2)
+    sprites.setDataNumber(sprite_tower, "darts_shot", 1)
+    sprites.setDataNumber(sprite_tower, "darts_shot_max", 1)
     sprites.setDataBoolean(sprite_tower, "dart_follow", false)
     sprites.setDataBoolean(sprite_tower, "facing_left", true)
     sprites.setDataNumber(sprite_tower, "dart_image_index", 0)
@@ -655,21 +659,25 @@ function dart_image_from_index (index: number) {
 }
 function update_monkey_buccaneer (sprite: Sprite) {
     timer.throttle(convertToText(sprites.readDataNumber(sprite, "tower_id")), sprites.readDataNumber(sprite, "fire_dart_delay"), function () {
-        for (let index = 0; index < sprites.readDataNumber(sprite, "darts_shot"); index++) {
-            farthest_sprite = get_farthest_among_path_sprite_of_kind(sprite, SpriteKind.Enemy, sprites.readDataNumber(sprite, "tower_distance"))
-            if (can_find_farthest_among_path_sprite_of_kind(sprite, SpriteKind.Enemy, sprites.readDataNumber(sprite, "tower_distance"))) {
+        farthest_sprite = get_farthest_among_path_sprite_of_kind(sprite, SpriteKind.Enemy, sprites.readDataNumber(sprite, "tower_distance"))
+        if (can_find_farthest_among_path_sprite_of_kind(sprite, SpriteKind.Enemy, sprites.readDataNumber(sprite, "tower_distance"))) {
+            for (let index = 0; index <= 1; index++) {
                 projectile = summon_dart(sprites.readDataNumber(sprite, "dart_image_index"), sprite)
-                sprites.setDataNumber(projectile, "angle", spriteutils.radiansToDegrees(spriteutils.angleFrom(projectile, farthest_sprite)) - 90)
+                if (index == 0) {
+                    sprites.setDataNumber(projectile, "angle", spriteutils.radiansToDegrees(spriteutils.angleFrom(projectile, farthest_sprite)) - 90)
+                } else {
+                    sprites.setDataNumber(projectile, "angle", spriteutils.radiansToDegrees(spriteutils.angleFrom(projectile, farthest_sprite)) - 90 - 180)
+                }
                 transformSprites.rotateSprite(projectile, sprites.readDataNumber(projectile, "angle"))
                 if (debug && false) {
                     projectile.say(sprites.readDataNumber(projectile, "angle"))
                 }
                 sprites.setDataNumber(projectile, "dart_health", sprites.readDataNumber(sprite, "dart_health"))
                 flip_tower(sprite, sprites.readDataNumber(projectile, "angle"))
-                if (sprites.readDataBoolean(sprite, "dart_follow")) {
-                    projectile.follow(farthest_sprite, sprites.readDataNumber(sprite, "dart_speed"))
-                } else {
+                if (index == 0) {
                     spriteutils.setVelocityAtAngle(projectile, spriteutils.angleFrom(projectile, farthest_sprite), sprites.readDataNumber(sprite, "dart_speed"))
+                } else {
+                    spriteutils.setVelocityAtAngle(projectile, spriteutils.angleFrom(projectile, farthest_sprite) + 3.141592653589796, sprites.readDataNumber(sprite, "dart_speed"))
                 }
             }
         }
@@ -900,6 +908,44 @@ function set_ui_icons () {
     info.setScore(100)
     info.setLife(100)
 }
+function monkey_buccaneer_right_click () {
+    blockMenu.setColors(1, 15)
+    tower_options = ["Cancel", "Sell for $" + sprites.readDataNumber(overlapping_sprite, "sell_price")]
+    if (sprites.readDataNumber(overlapping_sprite, "fire_dart_delay") > sprites.readDataNumber(overlapping_sprite, "fire_dart_delay_min")) {
+        tower_options.push("Decrease firing delay ($50) to " + (sprites.readDataNumber(overlapping_sprite, "fire_dart_delay") - 200) + " ms")
+    }
+    if (sprites.readDataNumber(overlapping_sprite, "tower_distance") < sprites.readDataNumber(overlapping_sprite, "tower_max_distance")) {
+        tower_options.push("Increase visibility ($30) to " + (sprites.readDataNumber(overlapping_sprite, "tower_distance") + 16) + " px")
+    }
+    if (sprites.readDataNumber(overlapping_sprite, "dart_health") < sprites.readDataNumber(overlapping_sprite, "dart_health_max")) {
+        tower_options.push("Increase dart durability ($40) to " + (sprites.readDataNumber(overlapping_sprite, "dart_health") + 1) + " Bloons")
+    }
+    blockMenu.showMenu(tower_options, MenuStyle.List, MenuLocation.BottomHalf)
+    wait_for_menu_select()
+    if (blockMenu.selectedMenuIndex() == 0) {
+    	
+    } else if (blockMenu.selectedMenuIndex() == 1) {
+        info.changeScoreBy(sprites.readDataNumber(overlapping_sprite, "sell_price"))
+        overlapping_sprite.destroy()
+    } else if (blockMenu.selectedMenuOption().includes("Decrease firing delay") && info.score() >= 50) {
+        sprites.changeDataNumberBy(overlapping_sprite, "fire_dart_delay", -200)
+        sprites.changeDataNumberBy(overlapping_sprite, "sell_price", 30)
+        overlapping_sprite.startEffect(effects.halo, 1000)
+        change_score(-50)
+    } else if (blockMenu.selectedMenuOption().includes("Increase visibility") && info.score() >= 30) {
+        sprites.changeDataNumberBy(overlapping_sprite, "tower_distance", 16)
+        sprites.changeDataNumberBy(overlapping_sprite, "sell_price", 20)
+        overlapping_sprite.startEffect(effects.halo, 1000)
+        change_score(-30)
+    } else if (blockMenu.selectedMenuOption().includes("Increase dart durability") && info.score() >= 40) {
+        sprites.changeDataNumberBy(overlapping_sprite, "dart_health", 1)
+        sprites.changeDataNumberBy(overlapping_sprite, "sell_price", 30)
+        overlapping_sprite.startEffect(effects.halo, 1000)
+        change_score(-40)
+    } else {
+        sprite_cursor_pointer.say("Not enough money!", 1000)
+    }
+}
 function get_farthest_among_path_sprite_of_kind (sprite: Sprite, kind: number, max_distance: number) {
     progress = 0
     for (let sprite2 of sprites.allOfKind(kind)) {
@@ -1023,7 +1069,7 @@ function set_map_eerie_swamp () {
         tiles.loadMap(tilemap2)
         bloon_paths.push(scene.aStar(tiles.getTilesByType(myTiles.tile11)[0], tiles.getTilesByType(myTiles.tile12)[0]))
     }
-    tiles.setTilemap(tiles.createTilemap(hex`10000c00020305070703070302040304020402040702010703040302010101030101010604070107020703020103010101030404030201010703040101070402040407030404020104030201030203040207020407030701030704010101010102020307040701010704030203010201040202070703010307010101010103010202070404020107040104030402030101010107020701030101010104030704020301040704010101040301010101010101010702070204070202070407020704020704`, img`
+    tiles.setTilemap(tiles.createTilemap(hex`10000c00020301050503050302040304020402040502010503040302010101030101010104050105020503020103010101030404030201010503040101050402040405030404020104030201030203040205020405030501030504010101010102020305040501010504030203010201040202050503010305010101010103010202050404020105040104030402030101010105020501030101010104030504020301040504010101040301010101010101010502050204050202050405020504020504`, img`
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
@@ -1036,7 +1082,7 @@ function set_map_eerie_swamp () {
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
-        `, [myTiles.transparency16,myTiles.tile13,myTiles.tile14,myTiles.tile15,sprites.builtin.forestTiles0,myTiles.tile11,myTiles.tile12,myTiles.tile20], TileScale.Sixteen))
+        `, [myTiles.transparency16,myTiles.tile13,myTiles.tile14,myTiles.tile15,sprites.builtin.forestTiles0,myTiles.tile20], TileScale.Sixteen))
     scene.setBackgroundColor(6)
 }
 function can_find_farthest_among_path_sprite_of_kind (sprite: Sprite, kind: number, max_distance: number) {
@@ -1258,6 +1304,8 @@ forever(function () {
             update_tack_shooter(sprite)
         } else if (sprites.readDataString(sprite, "name") == "sniper_monkey") {
             update_sniper_monkey(sprite)
+        } else if (sprites.readDataString(sprite, "name") == "monkey_buccaneer") {
+            update_monkey_buccaneer(sprite)
         }
     }
 })
