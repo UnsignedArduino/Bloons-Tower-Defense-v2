@@ -236,6 +236,48 @@ function summon_sniper_monkey () {
     tower_counter += 1
     change_score(-30)
 }
+function summon_monkey_buccaneer () {
+    sprite_tower = sprites.create(img`
+        ...........fffff.........
+        ..........ff111ff........
+        ......ff.fff111fff.ff....
+        ......fffffff1fffffff....
+        .......fffffffffffff.....
+        ........cdfddfdeeff......
+        ........cdfddfdeeddf.....
+        .......cdeeddddeebdc.....
+        .......cddddcddeebdc.ff..
+        .......cccccdddeefc.fef..
+        ........fdddddeeff..fef..
+        .........fffffeeeef.fef..
+        .ffff......feeeeeeeffef..
+        fccccfff..feffefeeeeff...
+        fcccccccffffffefeeeef....
+        .fffcccccccfefffffffffff.
+        ....fffccccfccceeeeeeecef
+        .......ffffcceccccccccef.
+        .......fecceeeeeeeeeeef..
+        ........ffffffffffffff...
+        `, SpriteKind.Tower)
+    sprite_tower.setPosition(sprite_cursor_pointer.x, sprite_cursor_pointer.y)
+    sprites.setDataNumber(sprite_tower, "fire_dart_delay", 1000)
+    sprites.setDataNumber(sprite_tower, "fire_dart_delay_min", 200)
+    sprites.setDataNumber(sprite_tower, "tower_id", tower_counter)
+    sprites.setDataNumber(sprite_tower, "tower_distance", 64)
+    sprites.setDataNumber(sprite_tower, "tower_max_distance", 128)
+    sprites.setDataString(sprite_tower, "name", "monkey_buccaneer")
+    sprites.setDataNumber(sprite_tower, "sell_price", 40)
+    sprites.setDataNumber(sprite_tower, "dart_speed", 150)
+    sprites.setDataNumber(sprite_tower, "dart_health", 2)
+    sprites.setDataNumber(sprite_tower, "dart_health_max", 4)
+    sprites.setDataNumber(sprite_tower, "darts_shot", 2)
+    sprites.setDataNumber(sprite_tower, "darts_shot_max", 2)
+    sprites.setDataBoolean(sprite_tower, "dart_follow", false)
+    sprites.setDataBoolean(sprite_tower, "facing_left", true)
+    sprites.setDataNumber(sprite_tower, "dart_image_index", 0)
+    tower_counter += 1
+    change_score(-60)
+}
 function overlapped_sprite_of_kind (sprite: Sprite, kind: number) {
     for (let sprite2 of sprites.allOfKind(kind)) {
         if (sprite.overlapsWith(sprite2)) {
