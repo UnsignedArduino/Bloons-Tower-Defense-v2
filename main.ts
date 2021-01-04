@@ -653,6 +653,28 @@ function dart_image_from_index (index: number) {
         `]
     return dart_images[Math.constrain(index, 0, dart_images.length - 1)]
 }
+function update_monkey_buccaneer (sprite: Sprite) {
+    timer.throttle(convertToText(sprites.readDataNumber(sprite, "tower_id")), sprites.readDataNumber(sprite, "fire_dart_delay"), function () {
+        for (let index = 0; index < sprites.readDataNumber(sprite, "darts_shot"); index++) {
+            farthest_sprite = get_farthest_among_path_sprite_of_kind(sprite, SpriteKind.Enemy, sprites.readDataNumber(sprite, "tower_distance"))
+            if (can_find_farthest_among_path_sprite_of_kind(sprite, SpriteKind.Enemy, sprites.readDataNumber(sprite, "tower_distance"))) {
+                projectile = summon_dart(sprites.readDataNumber(sprite, "dart_image_index"), sprite)
+                sprites.setDataNumber(projectile, "angle", spriteutils.radiansToDegrees(spriteutils.angleFrom(projectile, farthest_sprite)) - 90)
+                transformSprites.rotateSprite(projectile, sprites.readDataNumber(projectile, "angle"))
+                if (debug && false) {
+                    projectile.say(sprites.readDataNumber(projectile, "angle"))
+                }
+                sprites.setDataNumber(projectile, "dart_health", sprites.readDataNumber(sprite, "dart_health"))
+                flip_tower(sprite, sprites.readDataNumber(projectile, "angle"))
+                if (sprites.readDataBoolean(sprite, "dart_follow")) {
+                    projectile.follow(farthest_sprite, sprites.readDataNumber(sprite, "dart_speed"))
+                } else {
+                    spriteutils.setVelocityAtAngle(projectile, spriteutils.angleFrom(projectile, farthest_sprite), sprites.readDataNumber(sprite, "dart_speed"))
+                }
+            }
+        }
+    })
+}
 function set_map_dark_dungeon () {
     bloon_paths = []
     start_x = 5
