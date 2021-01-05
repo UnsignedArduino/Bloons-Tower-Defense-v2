@@ -341,7 +341,7 @@ info.onCountdownEnd(function () {
                 }
             }
             timer.background(function () {
-                for (let index = 0; index < Math.min(wave * 5 / 2, 50); index++) {
+                for (let index = 0; index < wave * 5 / 2; index++) {
                     info.changeScoreBy(2)
                     pause(50)
                 }
@@ -1293,7 +1293,7 @@ sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, oth
     sprites.changeDataNumberBy(otherSprite, "health", -1)
     sprites.changeDataNumberBy(sprite, "dart_health", -1)
     if (sprites.readDataNumber(otherSprite, "health") <= 0) {
-        info.changeScoreBy(sprites.readDataNumber(otherSprite, "original_health"))
+        info.changeScoreBy(sprites.readDataNumber(otherSprite, "original_health") * 2)
         otherSprite.destroy(effects.trail, 100)
     } else {
         otherSprite.setImage(bloon_image_from_health(sprites.readDataNumber(otherSprite, "health")))
@@ -1330,7 +1330,7 @@ let wave = 0
 let game_started = false
 let menu_option_selected = false
 let debug = false
-debug = false
+debug = true
 color.setPalette(
 color.Black
 )
