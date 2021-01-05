@@ -143,7 +143,7 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
                 } else if (blockMenu.selectedMenuIndex() == 4 && ((info.score() >= 60 || debug) && (on_valid_water_spot(sprite_cursor_pointer) && !(overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower))))) {
                     summon_monkey_buccaneer()
                 } else {
-                    sprite_cursor_pointer.say("Not on a valid spot or not enough money!", 2000)
+                    sprite_cursor_pointer.say("Not on a valid spot or not enough money!", 5000)
                 }
             }
         })
@@ -946,6 +946,58 @@ function monkey_buccaneer_right_click () {
         sprite_cursor_pointer.say("Not enough money!", 1000)
     }
 }
+function set_map_under_the_sea () {
+    bloon_paths = []
+    start_x = 3
+    start_y = 0
+    land_tiles = [sprites.castle.tilePath5]
+    water_tiles = [sprites.castle.tilePath5]
+    for (let tilemap2 of [tiles.createMap(tiles.createTilemap(hex`10000c000101010c0101010101010101010101010101010501010101010708010505050d01060105010401010101010105030101010101050101010801050505050505010105050505050501010501010101050102050101010105010305010a08010501010501070801050101050101010105010105010101010501010505050505050101050505050505010a01050101010201010101010501020101010501010101010104010105050505050505010301010101010101010101010101010101010101`, img`
+        2 2 2 . 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 . 2 2 2 2 2 2 2 2 . . . . 
+        2 2 2 . 2 2 2 2 2 2 2 2 . 2 2 2 
+        2 2 2 . 2 2 2 2 2 . . . . 2 2 2 
+        2 . . . 2 2 2 2 2 . 2 2 2 2 2 2 
+        2 . 2 2 2 2 2 2 2 . 2 2 2 2 2 2 
+        2 . 2 2 2 2 2 2 2 . 2 2 2 2 2 2 
+        2 . 2 2 2 2 2 2 2 . . 2 2 2 2 2 
+        2 . . . . 2 2 2 2 2 . 2 2 2 2 2 
+        2 2 2 2 . 2 2 2 2 2 . 2 2 2 2 2 
+        2 2 2 2 . . . . . . . 2 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        `, [myTiles.transparency16,sprites.castle.tilePath5,sprites.castle.rock2,sprites.castle.rock1,sprites.castle.rock0,myTiles.tile19,sprites.builtin.coral0,sprites.builtin.coral1,sprites.builtin.coral2,sprites.builtin.coral2,sprites.builtin.coral4,sprites.builtin.coral1,myTiles.tile11,myTiles.tile12], TileScale.Sixteen)), tiles.createMap(tiles.createTilemap(hex`10000c000101010c0101010101010101010101010101010501010101010708010505050d01060105010401010101010105030101010101050101010801050505050505010105050505050501010501010101050102050101010105010305010a08010501010501070801050101050101010105010105010101010501010505050505050101050505050505010a01050101010201010101010501020101010501010101010104010105050505050505010301010101010101010101010101010101010101`, img`
+        2 2 2 . 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 . 2 2 2 2 2 2 2 2 . . . . 
+        2 2 2 . 2 2 2 2 2 2 2 2 . 2 2 2 
+        2 2 2 . 2 2 2 2 2 2 2 2 . . . 2 
+        2 2 2 . . . . 2 2 2 2 2 2 2 . 2 
+        2 2 2 2 2 2 . 2 2 2 2 2 2 2 . 2 
+        2 2 2 2 2 2 . 2 2 2 2 2 2 2 . 2 
+        2 2 2 2 2 2 . 2 2 2 . . . . . 2 
+        2 2 2 2 . . . 2 2 2 . 2 2 2 2 2 
+        2 2 2 2 . 2 2 2 2 2 . 2 2 2 2 2 
+        2 2 2 2 . . . . . . . 2 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        `, [myTiles.transparency16,sprites.castle.tilePath5,sprites.castle.rock2,sprites.castle.rock1,sprites.castle.rock0,myTiles.tile19,sprites.builtin.coral0,sprites.builtin.coral1,sprites.builtin.coral2,sprites.builtin.coral2,sprites.builtin.coral4,sprites.builtin.coral1,myTiles.tile11,myTiles.tile12], TileScale.Sixteen))]) {
+        tiles.loadMap(tilemap2)
+        bloon_paths.push(scene.aStar(tiles.getTilesByType(myTiles.tile11)[0], tiles.getTilesByType(myTiles.tile12)[0]))
+    }
+    tiles.setTilemap(tiles.createTilemap(hex`10000c00010101050101010101010101010101010101010501010101010b09010505050501060105010201010101010105030101010101050101010701050505050505010105050505050501010501010101050104050101010105010305010a07010501010501080901050101050101010105010105010101010501010505050505050101050505050505010a01050101010401010101010501040101010501010101010102010105050505050505010301010101010101010101010101010101010101`, img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, [myTiles.transparency16,sprites.castle.tilePath5,sprites.castle.rock0,sprites.castle.rock1,sprites.castle.rock2,myTiles.tile19,sprites.builtin.coral0,sprites.builtin.coral5,sprites.builtin.coral1,sprites.builtin.coral2,sprites.builtin.coral4,sprites.builtin.coral3], TileScale.Sixteen))
+    scene.setBackgroundColor(13)
+}
 function get_farthest_among_path_sprite_of_kind (sprite: Sprite, kind: number, max_distance: number) {
     progress = 0
     for (let sprite2 of sprites.allOfKind(kind)) {
@@ -1225,7 +1277,8 @@ blockMenu.showMenu([
 "Eerie Swamp",
 "Sand Castle",
 "The Dark Dungeon",
-"Figure Eights (And Zeros)"
+"Figure Eights (And Zeros)",
+"Under the Sea"
 ], MenuStyle.Grid, MenuLocation.BottomHalf)
 fade_out(2000, true)
 blockMenu.setControlsEnabled(true)
@@ -1242,6 +1295,8 @@ while (!(menu_option_selected)) {
         set_map_dark_dungeon()
     } else if (blockMenu.selectedMenuIndex() == 5) {
         set_map_figure_eights()
+    } else if (blockMenu.selectedMenuIndex() == 6) {
+        set_map_under_the_sea()
     }
     pause(100)
 }
