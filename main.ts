@@ -195,6 +195,10 @@ spriteutils.createRenderable(200, function (screen2) {
         } else {
             images.printCenter(screen2, "Wave " + wave + " end!", scene.screenHeight() / 2 - 39, 1)
         }
+    } else if (!(game_started)) {
+        screen2.fillRect(0, scene.screenHeight() / 2 - 45, scene.screenWidth(), 25, 15)
+        images.printCenter(screen2, "Bloons Tower Defense", scene.screenHeight() / 2 - 41, 1)
+        images.printCenter(screen2, "By Unsigned_Arduino", scene.screenHeight() / 2 - 31, 1)
     }
 })
 function summon_sniper_monkey () {
@@ -1210,7 +1214,19 @@ function summon_bloon (col: number, row: number, health: number, speed: number, 
     scene.followPath(sprite_bloon, bloon_paths[path], speed)
 }
 blockMenu.onMenuOptionSelected(function (option, index) {
-    menu_option_selected = true
+    if (!(option.includes("Random!"))) {
+        menu_option_selected = true
+    } else {
+        timer.background(function () {
+            for (let index = 0; index <= randint(20, 30); index++) {
+                blockMenu.setSelectedIndex(blockMenu.selectedMenuIndex() + 1)
+                pause(50 + index * 5)
+            }
+            if (blockMenu.selectedMenuOption().includes("Random!")) {
+                blockMenu.setSelectedIndex(blockMenu.selectedMenuIndex() + 1)
+            }
+        })
+    }
 })
 function set_map_city_park () {
     bloon_paths = []
@@ -1314,7 +1330,7 @@ let wave = 0
 let game_started = false
 let menu_option_selected = false
 let debug = false
-debug = true
+debug = false
 color.setPalette(
 color.Black
 )
@@ -1331,7 +1347,8 @@ blockMenu.showMenu([
 "The Dark Dungeon",
 "Figure Eights (And Zeros)",
 "Under the Sea",
-"Bloon's Forest"
+"Bloon's Forest",
+"Random!"
 ], MenuStyle.Grid, MenuLocation.BottomHalf)
 fade_out(2000, true)
 blockMenu.setControlsEnabled(true)
