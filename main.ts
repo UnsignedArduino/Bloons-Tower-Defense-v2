@@ -374,6 +374,58 @@ function wait_for_menu_select () {
     menu_open = false
     blockMenu.closeMenu()
 }
+function set_map_bloons_forest () {
+    bloon_paths = []
+    start_x = 0
+    start_y = 5
+    land_tiles = [myTiles.tile13, sprites.castle.tileDarkGrass2, sprites.castle.tileDarkGrass1, sprites.castle.tileDarkGrass3]
+    water_tiles = []
+    for (let tilemap2 of [tiles.createMap(tiles.createTilemap(hex`10000c00040303030303030306030803030305030303060305030303030303030303030303030703030304030303050307030302030303030309030303030303030303030503030303030305030303030303040301030303080903030307030306030303030403060303030303030303030305030303030303030703030503030303030303030303030309030303030309030303060303050303030303030304030303070307030303030303080303030303030303030303030303060303030303060303`, img`
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 . . . 
+        2 2 2 2 2 2 . . . . . . . . 2 2 
+        2 2 . . . . . 2 2 2 2 2 2 2 2 2 
+        . . . 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        `, [myTiles.transparency16,myTiles.tile11,myTiles.tile12,myTiles.tile13,sprites.castle.tileDarkGrass2,sprites.castle.saplingOak,sprites.castle.saplingPine,sprites.castle.tileDarkGrass1,sprites.castle.tileDarkGrass3,sprites.castle.shrub], TileScale.Sixteen)), tiles.createMap(tiles.createTilemap(hex`10000c00040303030303030306030803030305030303060305030303030303030303030303030703030304030303050307030303030303030309030303030303030303030503030303030305030303030303040301030303080903030307030306030303030403060303030303030303030305030303030303030703030503030303030303030303030309030303030309030303060303050303030303030304030303020307030303030303080303030303030303030303030303060303030303060303`, img`
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        . . . 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 . 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 . . . . 2 2 2 2 2 . . . 2 2 
+        2 2 2 2 2 . 2 2 2 2 . . 2 . . 2 
+        2 2 2 2 2 . . . . . . 2 2 2 . . 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+        `, [myTiles.transparency16,myTiles.tile11,myTiles.tile12,myTiles.tile13,sprites.castle.tileDarkGrass2,sprites.castle.saplingOak,sprites.castle.saplingPine,sprites.castle.tileDarkGrass1,sprites.castle.tileDarkGrass3,sprites.castle.shrub], TileScale.Sixteen))]) {
+        tiles.loadMap(tilemap2)
+        bloon_paths.push(scene.aStar(tiles.getTilesByType(myTiles.tile11)[0], tiles.getTilesByType(myTiles.tile12)[0]))
+    }
+    tiles.setTilemap(tiles.createTilemap(hex`10000c00030101010101010106010401010105010101060105010101010101010101010101010201010103010101050102080808010101010107080808080808080801010501080808080805010101010101030108080801040701010102010106010101010308060101010101010101010105010101080808080201010501080808010101010101010807010101080807080801060101050108080808080803010108080102010101010101040101010101010101010101010101060101010101060101`, img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, [myTiles.transparency16,myTiles.tile13,sprites.castle.tileDarkGrass1,sprites.castle.tileDarkGrass2,sprites.castle.tileDarkGrass3,sprites.castle.saplingOak,sprites.castle.saplingPine,sprites.castle.shrub,myTiles.tile21], TileScale.Sixteen))
+    scene.setBackgroundColor(6)
+}
 function set_map_sand_castle () {
     bloon_paths = []
     start_x = 0
@@ -1278,7 +1330,8 @@ blockMenu.showMenu([
 "Sand Castle",
 "The Dark Dungeon",
 "Figure Eights (And Zeros)",
-"Under the Sea"
+"Under the Sea",
+"Bloon's Forest"
 ], MenuStyle.Grid, MenuLocation.BottomHalf)
 fade_out(2000, true)
 blockMenu.setControlsEnabled(true)
@@ -1297,6 +1350,8 @@ while (!(menu_option_selected)) {
         set_map_figure_eights()
     } else if (blockMenu.selectedMenuIndex() == 6) {
         set_map_under_the_sea()
+    } else if (blockMenu.selectedMenuIndex() == 7) {
+        set_map_bloons_forest()
     }
     pause(100)
 }
