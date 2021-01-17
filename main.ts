@@ -78,6 +78,9 @@ function sniper_monkey_right_click () {
     	
     } else if (blockMenu.selectedMenuIndex() == 1) {
         info.changeScoreBy(sprites.readDataNumber(overlapping_sprite, "sell_price"))
+        if (user_monkey_shadows) {
+            sprites.readDataSprite(overlapping_sprite, "shadow_sprite").destroy()
+        }
         overlapping_sprite.destroy()
     } else if (blockMenu.selectedMenuOption().includes("Decrease firing delay") && info.score() >= 50) {
         sprites.changeDataNumberBy(overlapping_sprite, "fire_dart_delay", -250)
@@ -167,6 +170,9 @@ function tack_shooter_right_click () {
     	
     } else if (blockMenu.selectedMenuIndex() == 1) {
         info.changeScoreBy(sprites.readDataNumber(overlapping_sprite, "sell_price"))
+        if (user_monkey_shadows) {
+            sprites.readDataSprite(overlapping_sprite, "shadow_sprite").destroy()
+        }
         overlapping_sprite.destroy()
     } else if (blockMenu.selectedMenuOption().includes("Decrease firing delay") && info.score() >= 50) {
         sprites.changeDataNumberBy(overlapping_sprite, "fire_dart_delay", -100)
@@ -222,9 +228,6 @@ function summon_sniper_monkey () {
         ..ffffddfeeeeeeffef...
         ....ffffffeeeeeffff...
         .....fffffffffffff....
-        ......................
-        ......................
-        ......................
         `, SpriteKind.Tower)
     sprite_tower.setPosition(sprite_cursor_pointer.x, sprite_cursor_pointer.y)
     sprites.setDataNumber(sprite_tower, "fire_dart_delay", 2000)
@@ -241,6 +244,17 @@ function summon_sniper_monkey () {
     sprites.setDataBoolean(sprite_tower, "dart_follow", false)
     sprites.setDataBoolean(sprite_tower, "facing_left", true)
     sprites.setDataNumber(sprite_tower, "dart_image_index", 2)
+    if (user_monkey_shadows) {
+        create_shadow(sprite_tower, img`
+            . . . f f f f f f f f f f f f . . . 
+            . f f f f f f f f f f f f f f f f . 
+            f f f f f f f f f f f f f f f f f f 
+            f f f f f f f f f f f f f f f f f f 
+            f f f f f f f f f f f f f f f f f f 
+            . f f f f f f f f f f f f f f f f . 
+            . . . f f f f f f f f f f f f . . . 
+            `)
+    }
     tower_counter += 1
     change_score(-30)
 }
@@ -283,6 +297,17 @@ function summon_monkey_buccaneer () {
     sprites.setDataBoolean(sprite_tower, "dart_follow", false)
     sprites.setDataBoolean(sprite_tower, "facing_left", true)
     sprites.setDataNumber(sprite_tower, "dart_image_index", 0)
+    if (user_monkey_shadows) {
+        create_shadow(sprite_tower, img`
+            . . . f f f f f f f f f f f f f f . . . 
+            . f f f f f f f f f f f f f f f f f f . 
+            f f f f f f f f f f f f f f f f f f f f 
+            f f f f f f f f f f f f f f f f f f f f 
+            f f f f f f f f f f f f f f f f f f f f 
+            . f f f f f f f f f f f f f f f f f f . 
+            . . . f f f f f f f f f f f f f f . . . 
+            `)
+    }
     tower_counter += 1
     change_score(-60)
 }
@@ -536,6 +561,17 @@ function summon_dart_monkey () {
     sprites.setDataBoolean(sprite_tower, "dart_follow", false)
     sprites.setDataBoolean(sprite_tower, "facing_left", true)
     sprites.setDataNumber(sprite_tower, "dart_image_index", 0)
+    if (user_monkey_shadows) {
+        create_shadow(sprite_tower, img`
+            . . . f f f f f f f f . . . 
+            . f f f f f f f f f f f f . 
+            f f f f f f f f f f f f f f 
+            f f f f f f f f f f f f f f 
+            f f f f f f f f f f f f f f 
+            . f f f f f f f f f f f f . 
+            . . . f f f f f f f f . . . 
+            `)
+    }
     tower_counter += 1
     change_score(-30)
 }
@@ -982,6 +1018,9 @@ function monkey_buccaneer_right_click () {
     	
     } else if (blockMenu.selectedMenuIndex() == 1) {
         info.changeScoreBy(sprites.readDataNumber(overlapping_sprite, "sell_price"))
+        if (user_monkey_shadows) {
+            sprites.readDataSprite(overlapping_sprite, "shadow_sprite").destroy()
+        }
         overlapping_sprite.destroy()
     } else if (blockMenu.selectedMenuOption().includes("Decrease firing delay") && info.score() >= 50) {
         sprites.changeDataNumberBy(overlapping_sprite, "fire_dart_delay", -200)
@@ -1100,6 +1139,17 @@ function summon_tack_shooter () {
     sprites.setDataNumber(sprite_tower, "dart_health_max", 3)
     sprites.setDataBoolean(sprite_tower, "dart_follow", false)
     sprites.setDataNumber(sprite_tower, "dart_image_index", 1)
+    if (user_monkey_shadows) {
+        create_shadow(sprite_tower, img`
+            . . . f f f f f f f f . . . 
+            . f f f f f f f f f f f f . 
+            f f f f f f f f f f f f f f 
+            f f f f f f f f f f f f f f 
+            f f f f f f f f f f f f f f 
+            . f f f f f f f f f f f f . 
+            . . . f f f f f f f f . . . 
+            `)
+    }
     tower_counter += 1
     change_score(-30)
 }
@@ -1121,6 +1171,9 @@ function dart_monkey_right_click () {
     	
     } else if (blockMenu.selectedMenuIndex() == 1) {
         info.changeScoreBy(sprites.readDataNumber(overlapping_sprite, "sell_price"))
+        if (user_monkey_shadows) {
+            sprites.readDataSprite(overlapping_sprite, "shadow_sprite").destroy()
+        }
         overlapping_sprite.destroy()
     } else if (blockMenu.selectedMenuOption().includes("Decrease firing delay") && info.score() >= 50) {
         sprites.changeDataNumberBy(overlapping_sprite, "fire_dart_delay", -200)
@@ -1140,6 +1193,11 @@ function dart_monkey_right_click () {
     } else {
         sprite_cursor_pointer.say("Not enough money!", 1000)
     }
+}
+function create_shadow (sprite: Sprite, shadow: Image) {
+    sprites.setDataSprite(sprite, "shadow_sprite", shader.createImageShaderSprite(shadow, shader.ShadeLevel.One))
+    sprites.readDataSprite(sprite, "shadow_sprite").setPosition(sprite.x, sprite.bottom)
+    sprites.readDataSprite(sprite, "shadow_sprite").z = sprite.z - 1
 }
 function set_map_eerie_swamp () {
     bloon_paths = []
@@ -1317,8 +1375,10 @@ let display_wave = false
 let wave = 0
 let game_started = false
 let menu_option_selected = false
+let user_monkey_shadows = false
 let debug = false
 debug = true
+user_monkey_shadows = true
 color.setPalette(
 color.Black
 )
