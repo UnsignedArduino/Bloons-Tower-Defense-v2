@@ -9,6 +9,9 @@ function initialize_variables () {
     in_wave = false
     menu_open = false
     tower_counter = 0
+    fps = 0
+    fps_count = 0
+    average_fps = 0
 }
 function update_sniper_monkey (sprite: Sprite) {
     timer.throttle(convertToText(sprites.readDataNumber(sprite, "tower_id")), sprites.readDataNumber(sprite, "fire_dart_delay"), function () {
@@ -195,6 +198,12 @@ function tack_shooter_right_click () {
         sprite_cursor_pointer.say("Not enough money!", 1000)
     }
 }
+sprites.onDestroyed(SpriteKind.Tower, function (sprite) {
+    sprite_shadow = sprites.readDataSprite(sprite, "shadow_sprite")
+    if (sprite_shadow) {
+        sprite_shadow.destroy()
+    }
+})
 spriteutils.createRenderable(200, function (screen2) {
     if (display_wave || false) {
         screen2.fillRect(0, scene.screenHeight() / 2 - 45, scene.screenWidth(), 20, 15)
@@ -757,7 +766,9 @@ function update_monkey_buccaneer (sprite: Sprite) {
                     projectile.say(sprites.readDataNumber(projectile, "angle"))
                 }
                 sprites.setDataNumber(projectile, "dart_health", sprites.readDataNumber(sprite, "dart_health"))
-                flip_tower(sprite, sprites.readDataNumber(projectile, "angle"))
+                if (index == 0) {
+                    flip_tower(sprite, sprites.readDataNumber(projectile, "angle"))
+                }
                 if (index == 0) {
                     spriteutils.setVelocityAtAngle(projectile, spriteutils.angleFrom(projectile, farthest_sprite), sprites.readDataNumber(sprite, "dart_speed"))
                 } else {
@@ -1332,7 +1343,11 @@ sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, oth
     sprites.changeDataNumberBy(sprite, "dart_health", -1)
     if (sprites.readDataNumber(otherSprite, "health") <= 0) {
         info.changeScoreBy(sprites.readDataNumber(otherSprite, "original_health") * 2)
-        otherSprite.destroy(effects.trail, 100)
+        if (user_bloon_particles) {
+            otherSprite.destroy(effects.trail, 100)
+        } else {
+            otherSprite.destroy()
+        }
     } else {
         otherSprite.setImage(bloon_image_from_health(sprites.readDataNumber(otherSprite, "health")))
     }
@@ -1341,7 +1356,6 @@ sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, oth
     }
 })
 let sprite_bloon: Sprite = null
-let sprite_shadow: Sprite = null
 let progress = 0
 let dart_images: Image[] = []
 let sprite_farthest_among_path: Sprite = null
@@ -1354,12 +1368,16 @@ let bloon_paths: tiles.Location[][] = []
 let bloon_path = 0
 let water_tiles: Image[] = []
 let sprite_tower: Sprite = null
+let sprite_shadow: Sprite = null
 let sprite_cursor_pointer: Sprite = null
 let overlapping_sprite: Sprite = null
 let tower_options: string[] = []
 let land_tiles: Image[] = []
 let projectile: Sprite = null
 let farthest_sprite: Sprite = null
+let average_fps = 0
+let fps_count = 0
+let fps = 0
 let tower_counter = 0
 let menu_open = false
 let in_wave = false
@@ -1369,11 +1387,13 @@ let display_wave = false
 let wave = 0
 let game_started = false
 let menu_option_selected = false
+let user_bloon_particles = false
 let user_monkey_shadows = false
 let debug = false
 debug = true
 user_monkey_shadows = true
-let user_bloon_shadows = false
+let user_bloon_shadows = true
+user_bloon_particles = true
 color.setPalette(
 color.Black
 )
@@ -1425,6 +1445,18 @@ game_started = true
 game.onUpdate(function () {
     sprite_cursor_pointer.top = sprite_cursor.top
     sprite_cursor_pointer.left = sprite_cursor.left
+})
+game.onUpdate(function () {
+    fps_count += 1
+})
+game.onUpdateInterval(1000, function () {
+    fps = fps_count
+    average_fps += fps
+    average_fps = Math.round(average_fps / 2)
+    fps_count = 0
+    if (debug && false) {
+        sprite_cursor.say("" + fps + ", " + average_fps, 1000)
+    }
 })
 forever(function () {
     if (overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower)) {
@@ -1485,6 +1517,7 @@ forever(function () {
                 `, shader.ShadeLevel.One))
             sprites.readDataSprite(sprite_bloon, "shadow_sprite").x = sprite_bloon.x
             sprites.readDataSprite(sprite_bloon, "shadow_sprite").y = sprite_bloon.bottom
+            sprites.readDataSprite(sprite_bloon, "shadow_sprite").lifespan = 5000
         }
     }
 })
