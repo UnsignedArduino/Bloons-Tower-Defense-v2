@@ -32,6 +32,12 @@ function update_sniper_monkey (sprite: Sprite) {
         }
     })
 }
+controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (controller.A.isPressed() && controller.B.isPressed()) {
+        starting_wave = false
+        info.startCountdown(5)
+    }
+})
 function update_dart_monkey (sprite: Sprite) {
     timer.throttle(convertToText(sprites.readDataNumber(sprite, "tower_id")), sprites.readDataNumber(sprite, "fire_dart_delay"), function () {
         farthest_sprite = get_farthest_among_path_sprite_of_kind(sprite, SpriteKind.Enemy, sprites.readDataNumber(sprite, "tower_distance"))
@@ -78,9 +84,6 @@ function sniper_monkey_right_click () {
     	
     } else if (blockMenu.selectedMenuIndex() == 1) {
         info.changeScoreBy(sprites.readDataNumber(overlapping_sprite, "sell_price"))
-        if (user_monkey_shadows) {
-            sprites.readDataSprite(overlapping_sprite, "shadow_sprite").destroy()
-        }
         overlapping_sprite.destroy()
     } else if (blockMenu.selectedMenuOption().includes("Decrease firing delay") && info.score() >= 50) {
         sprites.changeDataNumberBy(overlapping_sprite, "fire_dart_delay", -250)
@@ -117,44 +120,39 @@ function overlapping_sprite_of_kind (sprite: Sprite, kind: number) {
     return false
 }
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (controller.A.isPressed()) {
-        starting_wave = false
-        info.startCountdown(5)
-    } else {
-        if (!(menu_open) && game_started) {
-            timer.background(function () {
-                if (overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower)) {
-                    overlapping_sprite = overlapped_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower)
-                    if (sprites.readDataString(overlapping_sprite, "name") == "dart_monkey") {
-                        dart_monkey_right_click()
-                    } else if (sprites.readDataString(overlapping_sprite, "name") == "tack_shooter") {
-                        tack_shooter_right_click()
-                    } else if (sprites.readDataString(overlapping_sprite, "name") == "sniper_monkey") {
-                        sniper_monkey_right_click()
-                    } else if (sprites.readDataString(overlapping_sprite, "name") == "monkey_buccaneer") {
-                        monkey_buccaneer_right_click()
-                    }
-                } else {
-                    blockMenu.setColors(1, 15)
-                    // https://bloons.fandom.com/wiki/Tower_price_lists#Bloons_TD_5:~:text=%24.-,Bloons%20TD%205
-                    blockMenu.showMenu(["Cancel", "Dart Monkey ($30)", "Tack Shooter ($50)", "Sniper Monkey ($40)", "Monkey Buccaneer ($60)"], MenuStyle.List, MenuLocation.BottomHalf)
-                    wait_for_menu_select()
-                    if (blockMenu.selectedMenuIndex() == 0) {
-                    	
-                    } else if (blockMenu.selectedMenuIndex() == 1 && ((info.score() >= 30 || debug) && (on_valid_land_spot(sprite_cursor_pointer) && !(overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower))))) {
-                        summon_dart_monkey()
-                    } else if (blockMenu.selectedMenuIndex() == 2 && ((info.score() >= 50 || debug) && (on_valid_land_spot(sprite_cursor_pointer) && !(overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower))))) {
-                        summon_tack_shooter()
-                    } else if (blockMenu.selectedMenuIndex() == 3 && ((info.score() >= 40 || debug) && (on_valid_land_spot(sprite_cursor_pointer) && !(overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower))))) {
-                        summon_sniper_monkey()
-                    } else if (blockMenu.selectedMenuIndex() == 4 && ((info.score() >= 60 || debug) && (on_valid_water_spot(sprite_cursor_pointer) && !(overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower))))) {
-                        summon_monkey_buccaneer()
-                    } else {
-                        sprite_cursor_pointer.say("Not on a valid spot or not enough money!", 5000)
-                    }
+    if (!(menu_open) && game_started) {
+        timer.background(function () {
+            if (overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower)) {
+                overlapping_sprite = overlapped_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower)
+                if (sprites.readDataString(overlapping_sprite, "name") == "dart_monkey") {
+                    dart_monkey_right_click()
+                } else if (sprites.readDataString(overlapping_sprite, "name") == "tack_shooter") {
+                    tack_shooter_right_click()
+                } else if (sprites.readDataString(overlapping_sprite, "name") == "sniper_monkey") {
+                    sniper_monkey_right_click()
+                } else if (sprites.readDataString(overlapping_sprite, "name") == "monkey_buccaneer") {
+                    monkey_buccaneer_right_click()
                 }
-            })
-        }
+            } else {
+                blockMenu.setColors(1, 15)
+                // https://bloons.fandom.com/wiki/Tower_price_lists#Bloons_TD_5:~:text=%24.-,Bloons%20TD%205
+                blockMenu.showMenu(["Cancel", "Dart Monkey ($30)", "Tack Shooter ($50)", "Sniper Monkey ($40)", "Monkey Buccaneer ($60)"], MenuStyle.List, MenuLocation.BottomHalf)
+                wait_for_menu_select()
+                if (blockMenu.selectedMenuIndex() == 0) {
+                	
+                } else if (blockMenu.selectedMenuIndex() == 1 && ((info.score() >= 30 || debug) && (on_valid_land_spot(sprite_cursor_pointer) && !(overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower))))) {
+                    summon_dart_monkey()
+                } else if (blockMenu.selectedMenuIndex() == 2 && ((info.score() >= 50 || debug) && (on_valid_land_spot(sprite_cursor_pointer) && !(overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower))))) {
+                    summon_tack_shooter()
+                } else if (blockMenu.selectedMenuIndex() == 3 && ((info.score() >= 40 || debug) && (on_valid_land_spot(sprite_cursor_pointer) && !(overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower))))) {
+                    summon_sniper_monkey()
+                } else if (blockMenu.selectedMenuIndex() == 4 && ((info.score() >= 60 || debug) && (on_valid_water_spot(sprite_cursor_pointer) && !(overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower))))) {
+                    summon_monkey_buccaneer()
+                } else {
+                    sprite_cursor_pointer.say("Not on a valid spot or not enough money!", 5000)
+                }
+            }
+        })
     }
 })
 function tack_shooter_right_click () {
@@ -175,9 +173,6 @@ function tack_shooter_right_click () {
     	
     } else if (blockMenu.selectedMenuIndex() == 1) {
         info.changeScoreBy(sprites.readDataNumber(overlapping_sprite, "sell_price"))
-        if (user_monkey_shadows) {
-            sprites.readDataSprite(overlapping_sprite, "shadow_sprite").destroy()
-        }
         overlapping_sprite.destroy()
     } else if (blockMenu.selectedMenuOption().includes("Decrease firing delay") && info.score() >= 50) {
         sprites.changeDataNumberBy(overlapping_sprite, "fire_dart_delay", -100)
@@ -1023,9 +1018,6 @@ function monkey_buccaneer_right_click () {
     	
     } else if (blockMenu.selectedMenuIndex() == 1) {
         info.changeScoreBy(sprites.readDataNumber(overlapping_sprite, "sell_price"))
-        if (user_monkey_shadows) {
-            sprites.readDataSprite(overlapping_sprite, "shadow_sprite").destroy()
-        }
         overlapping_sprite.destroy()
     } else if (blockMenu.selectedMenuOption().includes("Decrease firing delay") && info.score() >= 50) {
         sprites.changeDataNumberBy(overlapping_sprite, "fire_dart_delay", -200)
@@ -1176,9 +1168,6 @@ function dart_monkey_right_click () {
     	
     } else if (blockMenu.selectedMenuIndex() == 1) {
         info.changeScoreBy(sprites.readDataNumber(overlapping_sprite, "sell_price"))
-        if (user_monkey_shadows) {
-            sprites.readDataSprite(overlapping_sprite, "shadow_sprite").destroy()
-        }
         overlapping_sprite.destroy()
     } else if (blockMenu.selectedMenuOption().includes("Decrease firing delay") && info.score() >= 50) {
         sprites.changeDataNumberBy(overlapping_sprite, "fire_dart_delay", -200)
@@ -1270,11 +1259,9 @@ function change_score (diff: number) {
     }
 }
 sprites.onDestroyed(SpriteKind.Enemy, function (sprite) {
-    if (user_bloon_shadows) {
-        sprite_shadow = sprites.readDataSprite(sprite, "shadow_sprite")
-        if (sprite_shadow) {
-            sprite_shadow.destroy()
-        }
+    sprite_shadow = sprites.readDataSprite(sprite, "shadow_sprite")
+    if (sprite_shadow) {
+        sprite_shadow.destroy()
     }
 })
 function summon_bloon (col: number, row: number, health: number, speed: number, path: number) {
@@ -1283,17 +1270,6 @@ function summon_bloon (col: number, row: number, health: number, speed: number, 
     sprites.setDataNumber(sprite_bloon, "health", health)
     sprites.setDataNumber(sprite_bloon, "original_health", health)
     scene.followPath(sprite_bloon, bloon_paths[path], speed)
-    if (user_bloon_shadows) {
-        sprites.setDataSprite(sprite_bloon, "shadow_sprite", shader.createImageShaderSprite(img`
-            . . . f f f f . . . 
-            . f f f f f f f f . 
-            f f f f f f f f f f 
-            . f f f f f f f f . 
-            . . . f f f f . . . 
-            `, shader.ShadeLevel.One))
-        sprites.readDataSprite(sprite_bloon, "shadow_sprite").x = sprite_bloon.x
-        sprites.readDataSprite(sprite_bloon, "shadow_sprite").y = sprite_bloon.bottom
-    }
 }
 blockMenu.onMenuOptionSelected(function (option, index) {
     menu_option_selected = true
@@ -1400,12 +1376,11 @@ let display_wave = false
 let wave = 0
 let game_started = false
 let menu_option_selected = false
-let user_bloon_shadows = false
 let user_monkey_shadows = false
 let debug = false
 debug = true
 user_monkey_shadows = true
-user_bloon_shadows = true
+let user_bloon_shadows = false
 color.setPalette(
 color.Black
 )
@@ -1505,6 +1480,19 @@ forever(function () {
         sprite_shadow = sprites.readDataSprite(sprite, "shadow_sprite")
         if (sprite_shadow) {
             sprite_shadow.setPosition(sprite.x, sprite.bottom)
+            if (!(user_bloon_shadows)) {
+                sprite_shadow.destroy()
+            }
+        } else if (user_bloon_shadows) {
+            sprites.setDataSprite(sprite_bloon, "shadow_sprite", shader.createImageShaderSprite(img`
+                . . . f f f f . . . 
+                . f f f f f f f f . 
+                f f f f f f f f f f 
+                . f f f f f f f f . 
+                . . . f f f f . . . 
+                `, shader.ShadeLevel.One))
+            sprites.readDataSprite(sprite_bloon, "shadow_sprite").x = sprite_bloon.x
+            sprites.readDataSprite(sprite_bloon, "shadow_sprite").y = sprite_bloon.bottom
         }
     }
 })
