@@ -6,6 +6,7 @@ function initialize_variables () {
     display_wave = false
     wave_begin = false
     starting_wave = false
+    in_wave = false
     menu_open = false
     tower_counter = 0
 }
@@ -32,12 +33,6 @@ function update_sniper_monkey (sprite: Sprite) {
         }
     })
 }
-controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (controller.A.isPressed() && controller.B.isPressed()) {
-        starting_wave = false
-        info.startCountdown(5)
-    }
-})
 function update_dart_monkey (sprite: Sprite) {
     timer.throttle(convertToText(sprites.readDataNumber(sprite, "tower_id")), sprites.readDataNumber(sprite, "fire_dart_delay"), function () {
         farthest_sprite = get_farthest_among_path_sprite_of_kind(sprite, SpriteKind.Enemy, sprites.readDataNumber(sprite, "tower_distance"))
@@ -120,39 +115,46 @@ function overlapping_sprite_of_kind (sprite: Sprite, kind: number) {
     return false
 }
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (!(menu_open) && game_started) {
-        timer.background(function () {
-            if (overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower)) {
-                overlapping_sprite = overlapped_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower)
-                if (sprites.readDataString(overlapping_sprite, "name") == "dart_monkey") {
-                    dart_monkey_right_click()
-                } else if (sprites.readDataString(overlapping_sprite, "name") == "tack_shooter") {
-                    tack_shooter_right_click()
-                } else if (sprites.readDataString(overlapping_sprite, "name") == "sniper_monkey") {
-                    sniper_monkey_right_click()
-                } else if (sprites.readDataString(overlapping_sprite, "name") == "monkey_buccaneer") {
-                    monkey_buccaneer_right_click()
-                }
-            } else {
-                blockMenu.setColors(1, 15)
-                // https://bloons.fandom.com/wiki/Tower_price_lists#Bloons_TD_5:~:text=%24.-,Bloons%20TD%205
-                blockMenu.showMenu(["Cancel", "Dart Monkey ($30)", "Tack Shooter ($50)", "Sniper Monkey ($40)", "Monkey Buccaneer ($60)"], MenuStyle.List, MenuLocation.BottomHalf)
-                wait_for_menu_select()
-                if (blockMenu.selectedMenuIndex() == 0) {
-                	
-                } else if (blockMenu.selectedMenuIndex() == 1 && ((info.score() >= 30 || debug) && (on_valid_land_spot(sprite_cursor_pointer) && !(overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower))))) {
-                    summon_dart_monkey()
-                } else if (blockMenu.selectedMenuIndex() == 2 && ((info.score() >= 50 || debug) && (on_valid_land_spot(sprite_cursor_pointer) && !(overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower))))) {
-                    summon_tack_shooter()
-                } else if (blockMenu.selectedMenuIndex() == 3 && ((info.score() >= 40 || debug) && (on_valid_land_spot(sprite_cursor_pointer) && !(overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower))))) {
-                    summon_sniper_monkey()
-                } else if (blockMenu.selectedMenuIndex() == 4 && ((info.score() >= 60 || debug) && (on_valid_water_spot(sprite_cursor_pointer) && !(overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower))))) {
-                    summon_monkey_buccaneer()
+    if (controller.A.isPressed()) {
+        if (!(in_wave)) {
+            starting_wave = false
+            info.startCountdown(5)
+        }
+    } else {
+        if (!(menu_open) && game_started) {
+            timer.background(function () {
+                if (overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower)) {
+                    overlapping_sprite = overlapped_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower)
+                    if (sprites.readDataString(overlapping_sprite, "name") == "dart_monkey") {
+                        dart_monkey_right_click()
+                    } else if (sprites.readDataString(overlapping_sprite, "name") == "tack_shooter") {
+                        tack_shooter_right_click()
+                    } else if (sprites.readDataString(overlapping_sprite, "name") == "sniper_monkey") {
+                        sniper_monkey_right_click()
+                    } else if (sprites.readDataString(overlapping_sprite, "name") == "monkey_buccaneer") {
+                        monkey_buccaneer_right_click()
+                    }
                 } else {
-                    sprite_cursor_pointer.say("Not on a valid spot or not enough money!", 5000)
+                    blockMenu.setColors(1, 15)
+                    // https://bloons.fandom.com/wiki/Tower_price_lists#Bloons_TD_5:~:text=%24.-,Bloons%20TD%205
+                    blockMenu.showMenu(["Cancel", "Dart Monkey ($30)", "Tack Shooter ($50)", "Sniper Monkey ($40)", "Monkey Buccaneer ($60)"], MenuStyle.List, MenuLocation.BottomHalf)
+                    wait_for_menu_select()
+                    if (blockMenu.selectedMenuIndex() == 0) {
+                    	
+                    } else if (blockMenu.selectedMenuIndex() == 1 && ((info.score() >= 30 || debug) && (on_valid_land_spot(sprite_cursor_pointer) && !(overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower))))) {
+                        summon_dart_monkey()
+                    } else if (blockMenu.selectedMenuIndex() == 2 && ((info.score() >= 50 || debug) && (on_valid_land_spot(sprite_cursor_pointer) && !(overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower))))) {
+                        summon_tack_shooter()
+                    } else if (blockMenu.selectedMenuIndex() == 3 && ((info.score() >= 40 || debug) && (on_valid_land_spot(sprite_cursor_pointer) && !(overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower))))) {
+                        summon_sniper_monkey()
+                    } else if (blockMenu.selectedMenuIndex() == 4 && ((info.score() >= 60 || debug) && (on_valid_water_spot(sprite_cursor_pointer) && !(overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower))))) {
+                        summon_monkey_buccaneer()
+                    } else {
+                        sprite_cursor_pointer.say("Not on a valid spot or not enough money!", 5000)
+                    }
                 }
-            }
-        })
+            })
+        }
     }
 })
 function tack_shooter_right_click () {
@@ -345,6 +347,7 @@ info.onCountdownEnd(function () {
         display_wave = true
         wave_begin = true
         starting_wave = true
+        in_wave = true
         timer.after(2000, function () {
             display_wave = false
         })
@@ -371,15 +374,11 @@ info.onCountdownEnd(function () {
                     pause(50)
                 }
             })
-            if (debug) {
-                info.startCountdown(3)
-            } else {
-                info.startCountdown(10)
-            }
             display_wave = true
             wave_begin = false
             timer.after(2000, function () {
                 display_wave = false
+                in_wave = false
             })
         })
     } else {
@@ -520,13 +519,6 @@ function create_cursor () {
     sprite_cursor.z = 149
     sprite_cursor_pointer.z = 150
     scene.cameraFollowSprite(sprite_cursor)
-}
-function start_game () {
-    if (debug) {
-        info.startCountdown(3)
-    } else {
-        info.startCountdown(10)
-    }
 }
 function summon_dart_monkey () {
     sprite_tower = sprites.create(img`
@@ -1370,6 +1362,7 @@ let projectile: Sprite = null
 let farthest_sprite: Sprite = null
 let tower_counter = 0
 let menu_open = false
+let in_wave = false
 let starting_wave = false
 let wave_begin = false
 let display_wave = false
@@ -1427,7 +1420,6 @@ pause(1000)
 create_cursor()
 set_ui_icons()
 initialize_variables()
-start_game()
 fade_out(2000, false)
 game_started = true
 game.onUpdate(function () {
