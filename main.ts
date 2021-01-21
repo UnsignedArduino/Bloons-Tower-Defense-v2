@@ -1457,6 +1457,19 @@ game.onUpdateInterval(1000, function () {
     if (debug && false) {
         sprite_cursor.say("" + fps + ", " + average_fps, 1000)
     }
+    if (debug && true) {
+        sprite_cursor.say("" + user_bloon_particles + ", " + user_bloon_shadows, 1000)
+    }
+    if (fps < 40) {
+        user_bloon_particles = false
+    } else if (average_fps > 40) {
+        user_bloon_particles = true
+    }
+    if (fps < 30) {
+        user_bloon_shadows = false
+    } else if (average_fps > 30) {
+        user_bloon_shadows = true
+    }
 })
 forever(function () {
     if (overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower)) {
@@ -1502,22 +1515,31 @@ forever(function () {
 forever(function () {
     for (let sprite of sprites.allOfKind(SpriteKind.Enemy)) {
         sprite_shadow = sprites.readDataSprite(sprite, "shadow_sprite")
-        if (sprite_shadow) {
+        sprites.setDataBoolean(sprite, "has_shadow", !(spriteutils.isDestroyed(sprite_shadow)))
+        if (false) {
+            sprite.say(sprites.readDataBoolean(sprite, "has_shadow"))
+        }
+        if (sprites.readDataBoolean(sprite, "has_shadow")) {
             sprite_shadow.setPosition(sprite.x, sprite.bottom)
-            if (!(user_bloon_shadows)) {
-                sprite_shadow.destroy()
+        }
+        if (user_bloon_shadows) {
+            if (!(sprites.readDataBoolean(sprite, "has_shadow"))) {
+                sprites.setDataSprite(sprite_bloon, "shadow_sprite", shader.createImageShaderSprite(img`
+                    . . . f f f f . . . 
+                    . f f f f f f f f . 
+                    f f f f f f f f f f 
+                    . f f f f f f f f . 
+                    . . . f f f f . . . 
+                    `, shader.ShadeLevel.One))
+                sprites.readDataSprite(sprite_bloon, "shadow_sprite").x = sprite_bloon.x
+                sprites.readDataSprite(sprite_bloon, "shadow_sprite").y = sprite_bloon.bottom
+                sprites.setDataBoolean(sprite, "has_shadow", true)
             }
-        } else if (user_bloon_shadows) {
-            sprites.setDataSprite(sprite_bloon, "shadow_sprite", shader.createImageShaderSprite(img`
-                . . . f f f f . . . 
-                . f f f f f f f f . 
-                f f f f f f f f f f 
-                . f f f f f f f f . 
-                . . . f f f f . . . 
-                `, shader.ShadeLevel.One))
-            sprites.readDataSprite(sprite_bloon, "shadow_sprite").x = sprite_bloon.x
-            sprites.readDataSprite(sprite_bloon, "shadow_sprite").y = sprite_bloon.bottom
-            sprites.readDataSprite(sprite_bloon, "shadow_sprite").lifespan = 5000
+        } else {
+            if (sprites.readDataBoolean(sprite, "has_shadow")) {
+                sprite_shadow.destroy()
+                sprites.setDataBoolean(sprite, "has_shadow", false)
+            }
         }
     }
 })
