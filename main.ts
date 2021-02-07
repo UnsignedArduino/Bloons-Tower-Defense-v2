@@ -1139,12 +1139,12 @@ blockMenu.showMenu([
 "Under the Sea",
 "Bloon's Forest"
 ], MenuStyle.Grid, MenuLocation.BottomHalf)
-timer.background(function() {
-    timer.background(function() {
+timer.background(function () {
+    timer.background(function () {
         BTD5Music.playMenuTheme()
     })
-    for (let i = 0; i < 81; i++) {
-        music.setVolume(i)
+    for (let index = 0; index <= 80; index++) {
+        music.setVolume(index)
         pause(10)
     }
 })
@@ -1171,23 +1171,27 @@ while (!(menu_option_selected)) {
     pause(100)
 }
 blockMenu.closeMenu()
-fade_in(2000, true)
-timer.background(function() {
-    for (let i = 80; i > -1; i--) {
-        music.setVolume(i)
+timer.background(function () {
+    for (let index = 0; index <= 80; index++) {
+        music.setVolume(80 - index)
         pause(10)
     }
     BTD5Music.stop()
-    for (let i = 0; i < 81; i++) {
-        music.setVolume(i)
-        pause(10)
-    }
-    BTD5Music.playGameTheme()
 })
+fade_in(2000, true)
 pause(1000)
 create_cursor()
 set_ui_icons()
 initialize_variables()
+timer.background(function () {
+    timer.background(function () {
+        BTD5Music.playGameTheme()
+    })
+    for (let index = 0; index <= 80; index++) {
+        music.setVolume(index)
+        pause(10)
+    }
+})
 fade_out(2000, false)
 game_started = true
 game.onUpdate(function () {
@@ -1267,13 +1271,11 @@ forever(function () {
         if (false) {
             sprite.say(sprites.readDataBoolean(sprite, "has_shadow"))
         }
-        // sprites.readDataBoolean(sprite, "has_shadow")
-        if (sprite_shadow) {
+        if (sprites.readDataBoolean(sprite, "has_shadow")) {
             sprite_shadow.setPosition(sprite.x, sprite.bottom)
         }
         if (user_bloon_shadows) {
-            // !(sprites.readDataBoolean(sprite, "has_shadow"))
-            if (!(sprite_shadow)) {
+            if (!(sprites.readDataBoolean(sprite, "has_shadow"))) {
                 sprites.setDataSprite(sprite, "shadow_sprite", shader.createImageShaderSprite(img`
                     . . . f f f f . . . 
                     . f f f f f f f f . 
