@@ -1139,6 +1139,15 @@ blockMenu.showMenu([
 "Under the Sea",
 "Bloon's Forest"
 ], MenuStyle.Grid, MenuLocation.BottomHalf)
+timer.background(function() {
+    timer.background(function() {
+        BTD5Music.playMenuTheme()
+    })
+    for (let i = 0; i < 81; i++) {
+        music.setVolume(i)
+        pause(10)
+    }
+})
 fade_out(2000, true)
 blockMenu.setControlsEnabled(true)
 while (!(menu_option_selected)) {
@@ -1163,6 +1172,18 @@ while (!(menu_option_selected)) {
 }
 blockMenu.closeMenu()
 fade_in(2000, true)
+timer.background(function() {
+    for (let i = 80; i > -1; i--) {
+        music.setVolume(i)
+        pause(10)
+    }
+    BTD5Music.stop()
+    for (let i = 0; i < 81; i++) {
+        music.setVolume(i)
+        pause(10)
+    }
+    BTD5Music.playGameTheme()
+})
 pause(1000)
 create_cursor()
 set_ui_icons()
@@ -1246,20 +1267,22 @@ forever(function () {
         if (false) {
             sprite.say(sprites.readDataBoolean(sprite, "has_shadow"))
         }
-        if (sprites.readDataBoolean(sprite, "has_shadow")) {
+        // sprites.readDataBoolean(sprite, "has_shadow")
+        if (sprite_shadow) {
             sprite_shadow.setPosition(sprite.x, sprite.bottom)
         }
         if (user_bloon_shadows) {
-            if (!(sprites.readDataBoolean(sprite, "has_shadow"))) {
-                sprites.setDataSprite(sprite_bloon, "shadow_sprite", shader.createImageShaderSprite(img`
+            // !(sprites.readDataBoolean(sprite, "has_shadow"))
+            if (!(sprite_shadow)) {
+                sprites.setDataSprite(sprite, "shadow_sprite", shader.createImageShaderSprite(img`
                     . . . f f f f . . . 
                     . f f f f f f f f . 
                     f f f f f f f f f f 
                     . f f f f f f f f . 
                     . . . f f f f . . . 
                     `, shader.ShadeLevel.One))
-                sprites.readDataSprite(sprite_bloon, "shadow_sprite").x = sprite_bloon.x
-                sprites.readDataSprite(sprite_bloon, "shadow_sprite").y = sprite_bloon.bottom
+                sprites.readDataSprite(sprite, "shadow_sprite").x = sprite.x
+                sprites.readDataSprite(sprite, "shadow_sprite").y = sprite.bottom
                 sprites.setDataBoolean(sprite, "has_shadow", true)
             }
         } else {
