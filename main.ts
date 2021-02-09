@@ -1030,7 +1030,7 @@ function can_find_farthest_among_path_sprite_of_kind (sprite: Sprite, kind: numb
 sprites.onCreated(SpriteKind.Projectile, function (sprite) {
     sprite.setFlag(SpriteFlag.GhostThroughSprites, false)
     sprite.setFlag(SpriteFlag.GhostThroughTiles, true)
-    sprite.setFlag(SpriteFlag.GhostThroughWalls, true)
+    sprite.setFlag(SpriteFlag.GhostThroughWalls, false)
 })
 function change_score (diff: number) {
     if (!(debug)) {
@@ -1295,6 +1295,7 @@ forever(function () {
                     `, shader.ShadeLevel.One))
                 sprites.readDataSprite(sprite, "shadow_sprite").x = sprite.x
                 sprites.readDataSprite(sprite, "shadow_sprite").y = sprite.bottom
+                sprites.readDataSprite(sprite, "shadow_sprite").lifespan = 5000
                 sprites.readDataSprite(sprite, "shadow_sprite").setFlag(SpriteFlag.Ghost, true)
                 sprites.setDataBoolean(sprite, "has_shadow", true)
             }
