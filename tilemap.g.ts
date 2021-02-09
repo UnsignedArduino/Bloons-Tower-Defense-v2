@@ -167,21 +167,6 @@ namespace myTiles {
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
 `, [myTiles.transparency16,myTiles.tile13,sprites.castle.tileDarkGrass1,sprites.castle.tileDarkGrass2,sprites.castle.tileDarkGrass3,sprites.castle.saplingOak,sprites.castle.saplingPine,sprites.castle.shrub,myTiles.tile21], TileScale.Sixteen);
-            case "level9":
-            case "level9":return tiles.createTilemap(hex`10000c000503010102010301010201030104010206090809080908090808080809081001010a010a020a040a141516030a050a01010b080f010b080f131217040b080f03010a020a010a010a1a1918020a010a01040c080e080e080e080808080e080f0101020101040103050101020304010a02030d0809080908090808080809080f01010a050a020a050a021415160a020a03010a020a010a010a031a19180a010a01070e080e080e080e080808080e08110101050101030201010103040101030104`, img`
-2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
-. . . . 2 . . . . . . . . . . 2 
-2 2 2 . 2 . 2 2 2 2 2 2 2 2 . 2 
-2 . . . 2 . . . 2 2 2 2 . . . 2 
-2 . 2 2 2 2 2 . 2 2 2 2 . 2 2 2 
-2 . . . . . . . 2 2 2 2 . . . 2 
-2 2 2 2 2 2 2 2 2 2 2 2 2 2 . 2 
-2 2 2 . . . 2 . . . . . . 2 . 2 
-2 2 2 . 2 . 2 . 2 2 2 2 . 2 . 2 
-2 2 2 . 2 . 2 . 2 2 2 2 . 2 . 2 
-. . . . 2 . . . 2 2 2 2 . . . 2 
-2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
-`, [myTiles.transparency16,myTiles.tile1,sprites.castle.tileGrass2,sprites.builtin.forestTiles0,sprites.castle.tileGrass1,sprites.castle.tileGrass3,myTiles.tile11,myTiles.tile12,sprites.vehicle.roadHorizontal,sprites.vehicle.roadIntersection3,sprites.vehicle.roadVertical,sprites.vehicle.roadIntersection2,sprites.vehicle.roadTurn3,sprites.vehicle.roadTurn1,sprites.vehicle.roadIntersection1,sprites.vehicle.roadIntersection4,sprites.vehicle.roadTurn2,sprites.vehicle.roadTurn4,myTiles.tile2,myTiles.tile3,myTiles.tile4,myTiles.tile5,myTiles.tile6,myTiles.tile7,myTiles.tile8,myTiles.tile9,myTiles.tile10], TileScale.Sixteen);
             case "level10":
             case "level10":return tiles.createTilemap(hex`10000c000503010102010301010201030104010206090809080908090808080809081001010a010a020a040a141516030a050a01010b080f010b080f131217040b080f03010a020a010a010a1a1918020a010a01040c080e080e080e080808080e080f0101020101040103050101020304010a02030d0809080908090808080809080f01010a050a020a050a021415160a020a03010a020a010a010a031a19180a010a01070e080e080e080e080808080e08110101050101030201010103040101030104`, img`
 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
@@ -362,6 +347,21 @@ namespace myTiles {
 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
 `, [myTiles.transparency16,myTiles.tile11,myTiles.tile12,myTiles.tile13,sprites.castle.tileDarkGrass2,sprites.castle.saplingOak,sprites.castle.saplingPine,sprites.castle.tileDarkGrass1,sprites.castle.tileDarkGrass3,sprites.castle.shrub], TileScale.Sixteen);
+            case "level9":
+            case "level9":return tiles.createTilemap(hex`10000c000503010102010301010201030104010206090809080908090808080809081001010a010a020a040a141516030a050a01010b080f010b080f131217040b080f03010a020a010a010a1a1918020a010a01040c080e080e080e080808080e080f0101020101040103050101020304010a02030d0809080908090808080809080f01010a050a020a050a021415160a020a03010a020a010a010a031a19180a010a01070e080e080e080e080808080e08110101050101030201010103040101030104`, img`
+2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+. . . . 2 . . . . . . . . . . 2 
+2 2 2 . 2 . 2 2 2 2 2 2 2 2 . 2 
+2 . . . 2 . . . 2 2 2 2 . . . 2 
+2 . 2 2 2 2 2 . 2 2 2 2 . 2 2 2 
+2 . . . . . . . 2 2 2 2 . . . 2 
+2 2 2 2 2 2 2 2 2 2 2 2 2 2 . 2 
+2 2 2 . . . 2 . . . . . . 2 . 2 
+2 2 2 . 2 . 2 . 2 2 2 2 . 2 . 2 
+2 2 2 . 2 . 2 . 2 2 2 2 . 2 . 2 
+. . . . 2 . . . 2 2 2 2 . . . 2 
+2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 
+`, [myTiles.transparency16,myTiles.tile1,sprites.castle.tileGrass2,sprites.builtin.forestTiles0,sprites.castle.tileGrass1,sprites.castle.tileGrass3,myTiles.tile11,myTiles.tile12,sprites.vehicle.roadHorizontal,sprites.vehicle.roadIntersection3,sprites.vehicle.roadVertical,sprites.vehicle.roadIntersection2,sprites.vehicle.roadTurn3,sprites.vehicle.roadTurn1,sprites.vehicle.roadIntersection1,sprites.vehicle.roadIntersection4,sprites.vehicle.roadTurn2,sprites.vehicle.roadTurn4,myTiles.tile2,myTiles.tile3,myTiles.tile4,myTiles.tile5,myTiles.tile6,myTiles.tile7,myTiles.tile8,myTiles.tile9,myTiles.tile10,myTiles.tile13,myTiles.tile14,myTiles.tile15,myTiles.tile16,myTiles.tile17,myTiles.tile18,myTiles.tile19,myTiles.tile20,myTiles.tile21], TileScale.Sixteen);
         }
         return null;
     })
@@ -369,26 +369,47 @@ namespace myTiles {
     helpers._registerFactory("tile", function(name: string) {
         switch(helpers.stringTrim(name)) {
             case "transparency16":return transparency16;
+            case "tile_grass":
             case "tile1":return tile1;
+            case "tile_water":
             case "tile2":return tile2;
+            case "tile_left_grass_edge_water":
             case "tile3":return tile3;
+            case "tile_top_left_grass_edge_water":
             case "tile4":return tile4;
+            case "tile_grass_top_edge_water":
             case "tile5":return tile5;
+            case "tile_top_right_grass_edge_water":
             case "tile6":return tile6;
+            case "tile_right_grass_edge_water":
             case "tile7":return tile7;
+            case "tile_bottom_right_grass_edge_water":
             case "tile8":return tile8;
+            case "tile_bottom_grass_edge_water":
             case "tile9":return tile9;
+            case "tile_bottom_left_grass_edge_water":
             case "tile10":return tile10;
+            case "tile_bloon_start":
             case "tile11":return tile11;
+            case "tile_bloon_end":
             case "tile12":return tile12;
+            case "tile_dark_water":
             case "tile13":return tile13;
+            case "tile_right_lilypad_dark_water":
             case "tile14":return tile14;
+            case "tile_left_lilypad_dark_water":
             case "tile15":return tile15;
+            case "tile_left_water_edge_sand":
             case "tile16":return tile16;
+            case "tile_right_water_edge_sand":
             case "tile17":return tile17;
+            case "tile_horizontal_wood_plank":
             case "tile18":return tile18;
+            case "tile_smooth_sand":
             case "tile19":return tile19;
+            case "tile_deep_dark_water":
             case "tile20":return tile20;
+            case "tile_dark_grass_bloon_pieces":
             case "tile21":return tile21;
         }
         return null;

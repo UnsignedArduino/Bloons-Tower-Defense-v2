@@ -415,11 +415,11 @@ function set_map_bloons_forest () {
     bloon_paths = []
     start_x = 0
     start_y = 5
-    land_tiles = [assets.tile`tile13`, sprites.castle.tileDarkGrass2, sprites.castle.tileDarkGrass1, sprites.castle.tileDarkGrass3]
+    land_tiles = [assets.tile`tile_dark_water`, sprites.castle.tileDarkGrass2, sprites.castle.tileDarkGrass1, sprites.castle.tileDarkGrass3]
     water_tiles = []
     for (let tilemap2 of [tiles.createMap(tilemap`level20`), tiles.createMap(tilemap`level21`)]) {
         tiles.loadMap(tilemap2)
-        bloon_paths.push(scene.aStar(tiles.getTilesByType(assets.tile`tile11`)[0], tiles.getTilesByType(assets.tile`tile12`)[0]))
+        bloon_paths.push(scene.aStar(tiles.getTilesByType(assets.tile`tile_bloon_start`)[0], tiles.getTilesByType(assets.tile`tile_bloon_end`)[0]))
     }
     tiles.setTilemap(tilemap`level8`)
     scene.setBackgroundColor(6)
@@ -428,11 +428,11 @@ function set_map_sand_castle () {
     bloon_paths = []
     start_x = 0
     start_y = 1
-    land_tiles = [sprites.castle.tilePath5, assets.tile`tile16`, assets.tile`tile17`]
-    water_tiles = [assets.tile`tile2`]
+    land_tiles = [sprites.castle.tilePath5, assets.tile`tile_left_water_edge_sand`, assets.tile`tile_right_water_edge_sand`]
+    water_tiles = [assets.tile`tile_water`]
     for (let tilemap2 of [tiles.createMap(tilemap`level17`)]) {
         tiles.loadMap(tilemap2)
-        bloon_paths.push(scene.aStar(tiles.getTilesByType(assets.tile`tile11`)[0], tiles.getTilesByType(assets.tile`tile12`)[0]))
+        bloon_paths.push(scene.aStar(tiles.getTilesByType(assets.tile`tile_bloon_start`)[0], tiles.getTilesByType(assets.tile`tile_bloon_end`)[0]))
     }
     tiles.setTilemap(tilemap`level6`)
     scene.setBackgroundColor(13)
@@ -540,20 +540,20 @@ function set_map_figure_eights () {
     bloon_paths = []
     start_x = 0
     start_y = 1
-    land_tiles = [assets.tile`tile1`, sprites.castle.tileGrass1, sprites.castle.tileGrass3, sprites.castle.tileGrass2]
+    land_tiles = [assets.tile`tile_grass`, sprites.castle.tileGrass1, sprites.castle.tileGrass3, sprites.castle.tileGrass2]
     water_tiles = [
-    assets.tile`tile2`,
-    assets.tile`tile3`,
-    assets.tile`tile4`,
-    assets.tile`tile6`,
-    assets.tile`tile7`,
-    assets.tile`tile8`,
-    assets.tile`tile9`,
-    assets.tile`tile10`
+    assets.tile`tile_water`,
+    assets.tile`tile_left_grass_edge_water`,
+    assets.tile`tile_top_left_grass_edge_water`,
+    assets.tile`tile_top_right_grass_edge_water`,
+    assets.tile`tile_right_grass_edge_water`,
+    assets.tile`tile_bottom_right_grass_edge_water`,
+    assets.tile`tile_bottom_grass_edge_water`,
+    assets.tile`tile_bottom_left_grass_edge_water`
     ]
     for (let tilemap2 of [tiles.createMap(tilemap`level9`), tiles.createMap(tilemap`level10`)]) {
         tiles.loadMap(tilemap2)
-        bloon_paths.push(scene.aStar(tiles.getTilesByType(assets.tile`tile11`)[0], tiles.getTilesByType(assets.tile`tile12`)[0]))
+        bloon_paths.push(scene.aStar(tiles.getTilesByType(assets.tile`tile_bloon_start`)[0], tiles.getTilesByType(assets.tile`tile_bloon_end`)[0]))
     }
     tiles.setTilemap(tilemap`level1`)
     scene.setBackgroundColor(7)
@@ -562,11 +562,11 @@ function set_map_field_of_flowers () {
     bloon_paths = []
     start_x = 13
     start_y = 0
-    land_tiles = [assets.tile`tile1`, sprites.castle.tileGrass1, sprites.castle.tileGrass3, sprites.castle.tileGrass2]
+    land_tiles = [assets.tile`tile_grass`, sprites.castle.tileGrass1, sprites.castle.tileGrass3, sprites.castle.tileGrass2]
     water_tiles = []
     for (let tilemap2 of [tiles.createMap(tilemap`level11`)]) {
         tiles.loadMap(tilemap2)
-        bloon_paths.push(scene.aStar(tiles.getTilesByType(assets.tile`tile11`)[0], tiles.getTilesByType(assets.tile`tile12`)[0]))
+        bloon_paths.push(scene.aStar(tiles.getTilesByType(assets.tile`tile_bloon_start`)[0], tiles.getTilesByType(assets.tile`tile_bloon_end`)[0]))
     }
     tiles.setTilemap(tilemap`level2`)
     scene.setBackgroundColor(7)
@@ -668,7 +668,7 @@ function set_map_dark_dungeon () {
     water_tiles = [sprites.dungeon.hazardLava0, sprites.dungeon.hazardLava1]
     for (let tilemap2 of [tiles.createMap(tilemap`level16`)]) {
         tiles.loadMap(tilemap2)
-        bloon_paths.push(scene.aStar(tiles.getTilesByType(assets.tile`tile11`)[0], tiles.getTilesByType(assets.tile`tile12`)[0]))
+        bloon_paths.push(scene.aStar(tiles.getTilesByType(assets.tile`tile_bloon_start`)[0], tiles.getTilesByType(assets.tile`tile_bloon_end`)[0]))
     }
     tiles.setTilemap(tilemap`level5`)
     scene.setBackgroundColor(13)
@@ -897,7 +897,7 @@ function set_map_under_the_sea () {
     water_tiles = [sprites.castle.tilePath5]
     for (let tilemap2 of [tiles.createMap(tilemap`level18`), tiles.createMap(tilemap`level19`)]) {
         tiles.loadMap(tilemap2)
-        bloon_paths.push(scene.aStar(tiles.getTilesByType(assets.tile`tile11`)[0], tiles.getTilesByType(assets.tile`tile12`)[0]))
+        bloon_paths.push(scene.aStar(tiles.getTilesByType(assets.tile`tile_bloon_start`)[0], tiles.getTilesByType(assets.tile`tile_bloon_end`)[0]))
     }
     tiles.setTilemap(tilemap`level7`)
     scene.setBackgroundColor(13)
@@ -1009,11 +1009,11 @@ function set_map_eerie_swamp () {
     bloon_paths = []
     start_x = 2
     start_y = 0
-    land_tiles = [assets.tile`tile14`, assets.tile`tile15`, sprites.builtin.forestTiles0]
-    water_tiles = [assets.tile`tile20`]
+    land_tiles = [assets.tile`tile_right_lilypad_dark_water`, assets.tile`tile_left_lilypad_dark_water`, sprites.builtin.forestTiles0]
+    water_tiles = [assets.tile`tile_deep_dark_water`]
     for (let tilemap2 of [tiles.createMap(tilemap`level14`), tiles.createMap(tilemap`level15`)]) {
         tiles.loadMap(tilemap2)
-        bloon_paths.push(scene.aStar(tiles.getTilesByType(assets.tile`tile11`)[0], tiles.getTilesByType(assets.tile`tile12`)[0]))
+        bloon_paths.push(scene.aStar(tiles.getTilesByType(assets.tile`tile_bloon_start`)[0], tiles.getTilesByType(assets.tile`tile_bloon_end`)[0]))
     }
     tiles.setTilemap(tilemap`level4`)
     scene.setBackgroundColor(6)
@@ -1056,20 +1056,20 @@ function set_map_city_park () {
     bloon_paths = []
     start_x = 1
     start_y = 0
-    land_tiles = [assets.tile`tile1`, sprites.castle.tileGrass1, sprites.castle.tileGrass3, sprites.castle.tileGrass2]
+    land_tiles = [assets.tile`tile_grass`, sprites.castle.tileGrass1, sprites.castle.tileGrass3, sprites.castle.tileGrass2]
     water_tiles = [
-    assets.tile`tile2`,
-    assets.tile`tile3`,
-    assets.tile`tile4`,
-    assets.tile`tile6`,
-    assets.tile`tile7`,
-    assets.tile`tile8`,
-    assets.tile`tile9`,
-    assets.tile`tile10`
+    assets.tile`tile_water`,
+    assets.tile`tile_left_grass_edge_water`,
+    assets.tile`tile_top_left_grass_edge_water`,
+    assets.tile`tile_top_right_grass_edge_water`,
+    assets.tile`tile_right_grass_edge_water`,
+    assets.tile`tile_bottom_right_grass_edge_water`,
+    assets.tile`tile_bottom_grass_edge_water`,
+    assets.tile`tile_bottom_left_grass_edge_water`
     ]
     for (let tilemap2 of [tiles.createMap(tilemap`level12`), tiles.createMap(tilemap`level13`)]) {
         tiles.loadMap(tilemap2)
-        bloon_paths.push(scene.aStar(tiles.getTilesByType(assets.tile`tile11`)[0], tiles.getTilesByType(assets.tile`tile12`)[0]))
+        bloon_paths.push(scene.aStar(tiles.getTilesByType(assets.tile`tile_bloon_start`)[0], tiles.getTilesByType(assets.tile`tile_bloon_end`)[0]))
     }
     tiles.setTilemap(tilemap`level3`)
     scene.setBackgroundColor(7)
