@@ -1027,6 +1027,11 @@ function can_find_farthest_among_path_sprite_of_kind (sprite: Sprite, kind: numb
     }
     return false
 }
+sprites.onCreated(SpriteKind.Projectile, function (sprite) {
+    sprite.setFlag(SpriteFlag.GhostThroughSprites, false)
+    sprite.setFlag(SpriteFlag.GhostThroughTiles, true)
+    sprite.setFlag(SpriteFlag.GhostThroughWalls, true)
+})
 function change_score (diff: number) {
     if (!(debug)) {
         info.changeScoreBy(diff)
