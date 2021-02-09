@@ -13,6 +13,11 @@ function initialize_variables () {
     fps_count = 0
     average_fps = 0
 }
+sprites.onCreated(SpriteKind.Enemy, function (sprite) {
+    sprite.setFlag(SpriteFlag.GhostThroughSprites, false)
+    sprite.setFlag(SpriteFlag.GhostThroughTiles, true)
+    sprite.setFlag(SpriteFlag.GhostThroughWalls, true)
+})
 function update_sniper_monkey (sprite: Sprite) {
     timer.throttle(convertToText(sprites.readDataNumber(sprite, "tower_id")), sprites.readDataNumber(sprite, "fire_dart_delay"), function () {
         for (let index = 0; index < sprites.readDataNumber(sprite, "darts_shot"); index++) {
@@ -1117,7 +1122,7 @@ let menu_option_selected = false
 let user_bloon_particles = false
 let user_monkey_shadows = false
 let debug = false
-debug = false
+debug = true
 user_monkey_shadows = true
 let user_bloon_shadows = true
 user_bloon_particles = true
@@ -1222,6 +1227,29 @@ game.onUpdateInterval(1000, function () {
     } else if (average_fps > 30) {
         user_bloon_shadows = true
     }
+    if (fps < 15) {
+        timer.throttle("toggle_audio", 800, function () {
+            timer.background(function () {
+                for (let index = 0; index <= 80; index++) {
+                    music.setVolume(80 - index)
+                    pause(10)
+                }
+                BTD5Music.stop()
+            })
+        })
+    } else if (average_fps > 15) {
+        timer.throttle("toggle_audio", 800, function () {
+            timer.background(function () {
+                timer.background(function () {
+                    BTD5Music.playGameTheme()
+                })
+                for (let index = 0; index <= 80; index++) {
+                    music.setVolume(index)
+                    pause(10)
+                }
+            })
+        })
+    }
 })
 forever(function () {
     if (overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower)) {
@@ -1285,6 +1313,7 @@ forever(function () {
                     `, shader.ShadeLevel.One))
                 sprites.readDataSprite(sprite, "shadow_sprite").x = sprite.x
                 sprites.readDataSprite(sprite, "shadow_sprite").y = sprite.bottom
+                sprites.readDataSprite(sprite, "shadow_sprite").setFlag(SpriteFlag.Ghost, true)
                 sprites.setDataBoolean(sprite, "has_shadow", true)
             }
         } else {
