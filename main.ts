@@ -3,8 +3,6 @@ namespace SpriteKind {
 }
 function initialize_variables () {
     wave = 0
-    display_wave = false
-    wave_begin = false
     starting_wave = false
     in_wave = false
     menu_open = false
@@ -210,14 +208,7 @@ sprites.onDestroyed(SpriteKind.Tower, function (sprite) {
     }
 })
 spriteutils.createRenderable(200, function (screen2) {
-    if (display_wave || false) {
-        screen2.fillRect(0, scene.screenHeight() / 2 - 45, scene.screenWidth(), 20, 15)
-        if (wave_begin) {
-            images.printCenter(screen2, "Wave " + wave + " begin!", scene.screenHeight() / 2 - 39, 1)
-        } else {
-            images.printCenter(screen2, "Wave " + wave + " end!", scene.screenHeight() / 2 - 39, 1)
-        }
-    } else if (!(game_started)) {
+    if (!(game_started)) {
         screen2.fillRect(0, scene.screenHeight() / 2 - 45, scene.screenWidth(), 25, 15)
         images.printCenter(screen2, "Bloons Tower Defense v2", scene.screenHeight() / 2 - 41, 1)
         images.printCenter(screen2, "By Unsigned_Arduino", scene.screenHeight() / 2 - 31, 1)
@@ -358,12 +349,10 @@ function fade_out (time: number, block: boolean) {
 info.onCountdownEnd(function () {
     if (!(starting_wave)) {
         wave += 1
-        display_wave = true
-        wave_begin = true
         starting_wave = true
         in_wave = true
-        timer.after(2000, function () {
-            display_wave = false
+        timer.background(function () {
+            Notification.notify("Wave " + wave + " begin!")
         })
         timer.background(function () {
             if (wave / 3 == Math.idiv(wave, 3)) {
@@ -388,10 +377,8 @@ info.onCountdownEnd(function () {
                     pause(50)
                 }
             })
-            display_wave = true
-            wave_begin = false
-            timer.after(2000, function () {
-                display_wave = false
+            timer.background(function () {
+                Notification.notify("Wave " + wave + " end!")
                 in_wave = false
             })
         })
@@ -1119,8 +1106,6 @@ let tower_counter = 0
 let menu_open = false
 let in_wave = false
 let starting_wave = false
-let wave_begin = false
-let display_wave = false
 let wave = 0
 let game_started = false
 let menu_option_selected = false
