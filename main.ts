@@ -157,7 +157,7 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
                     } else if (blockMenu.selectedMenuIndex() == 4 && ((info.score() >= 60 || debug) && (on_valid_water_spot(sprite_cursor_pointer) && !(overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower))))) {
                         summon_monkey_buccaneer()
                     } else {
-                        sprite_cursor_pointer.say("Not on a valid spot or not enough money!", 5000)
+                        game.showLongText("Not on a valid spot or not enough money!", DialogLayout.Bottom)
                     }
                 }
             })
