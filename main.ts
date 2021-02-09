@@ -1227,29 +1227,6 @@ game.onUpdateInterval(1000, function () {
     } else if (average_fps > 30) {
         user_bloon_shadows = true
     }
-    if (fps < 15) {
-        timer.throttle("toggle_audio", 800, function () {
-            timer.background(function () {
-                for (let index = 0; index <= 80; index++) {
-                    music.setVolume(80 - index)
-                    pause(10)
-                }
-                BTD5Music.stop()
-            })
-        })
-    } else if (average_fps > 15) {
-        timer.throttle("toggle_audio", 800, function () {
-            timer.background(function () {
-                timer.background(function () {
-                    BTD5Music.playGameTheme()
-                })
-                for (let index = 0; index <= 80; index++) {
-                    music.setVolume(index)
-                    pause(10)
-                }
-            })
-        })
-    }
 })
 forever(function () {
     if (overlapping_sprite_of_kind(sprite_cursor_pointer, SpriteKind.Tower)) {
