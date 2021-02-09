@@ -13,7 +13,7 @@
         "pxt-arcade-image-transform": "github:robo-technical-group/pxt-arcade-image-transform#v1.0.8",
         "Color Fading": "github:jwunderl/pxt-color#v0.2.0",
         "arcade-shader": "github:riknoll/arcade-shader#d2a2572906fdb68ff429f337e30606b069e688ea",
-        "Notifications": "github:unsignedarduino/notifications#0906b4be324bacefc4d4aafa8899bf9f872b7ab0"
+        "Notifications": "github:unsignedarduino/notifications#97135c2727b7ba8e216afd9283f04fc4a624b9ff"
     },
     "files": [
         "main.blocks",

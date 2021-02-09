@@ -24,7 +24,6 @@ function update_sniper_monkey (sprite: Sprite) {
                 projectile = summon_dart(sprites.readDataNumber(sprite, "dart_image_index"), sprite)
                 sprites.setDataNumber(projectile, "angle", spriteutils.radiansToDegrees(spriteutils.angleFrom(projectile, farthest_sprite)) - 90)
                 projectile.setFlag(SpriteFlag.Invisible, !(debug) && true)
-                transformSprites.rotateSprite(projectile, sprites.readDataNumber(projectile, "angle"))
                 if (debug && false) {
                     projectile.say(sprites.readDataNumber(projectile, "angle"))
                 }
@@ -45,7 +44,9 @@ function update_dart_monkey (sprite: Sprite) {
         if (can_find_farthest_among_path_sprite_of_kind(sprite, SpriteKind.Enemy, sprites.readDataNumber(sprite, "tower_distance"))) {
             projectile = summon_dart(sprites.readDataNumber(sprite, "dart_image_index"), sprite)
             sprites.setDataNumber(projectile, "angle", spriteutils.radiansToDegrees(spriteutils.angleFrom(projectile, farthest_sprite)) - 90)
-            transformSprites.rotateSprite(projectile, sprites.readDataNumber(projectile, "angle"))
+            if (average_fps > 15) {
+                transformSprites.rotateSprite(projectile, sprites.readDataNumber(projectile, "angle"))
+            }
             if (debug && false) {
                 projectile.say(sprites.readDataNumber(projectile, "angle"))
             }
@@ -327,7 +328,14 @@ function overlapped_sprite_of_kind (sprite: Sprite, kind: number) {
     return sprite
 }
 function summon_dart (image_index: number, sprite: Sprite) {
-    projectile = sprites.createProjectileFromSprite(dart_image_from_index(image_index).clone(), sprite, 0, 0)
+    if (fps < 15) {
+        projectile = sprites.createProjectileFromSprite(img`
+            f f 
+            f f 
+            `, sprite, 0, 0)
+    } else if (average_fps > 15) {
+        projectile = sprites.createProjectileFromSprite(dart_image_from_index(image_index).clone(), sprite, 0, 0)
+    }
     projectile.setFlag(SpriteFlag.AutoDestroy, false)
     projectile.setFlag(SpriteFlag.DestroyOnWall, true)
     return projectile
@@ -623,7 +631,9 @@ function update_monkey_buccaneer (sprite: Sprite) {
                 } else {
                     sprites.setDataNumber(projectile, "angle", spriteutils.radiansToDegrees(spriteutils.angleFrom(projectile, farthest_sprite)) - 90 - 180)
                 }
-                transformSprites.rotateSprite(projectile, sprites.readDataNumber(projectile, "angle"))
+                if (average_fps > 15) {
+                    transformSprites.rotateSprite(projectile, sprites.readDataNumber(projectile, "angle"))
+                }
                 if (debug && false) {
                     projectile.say(sprites.readDataNumber(projectile, "angle"))
                 }
@@ -819,7 +829,9 @@ function update_tack_shooter (sprite: Sprite) {
             for (let index = 0; index <= sprites.readDataNumber(sprite, "dart_count") - 1; index++) {
                 projectile = summon_dart(sprites.readDataNumber(sprite, "dart_image_index"), sprite)
                 sprites.setDataNumber(projectile, "angle", index * (360 / sprites.readDataNumber(sprite, "dart_count")))
-                transformSprites.rotateSprite(projectile, sprites.readDataNumber(projectile, "angle"))
+                if (average_fps > 15) {
+                    transformSprites.rotateSprite(projectile, sprites.readDataNumber(projectile, "angle"))
+                }
                 if (debug && false) {
                     projectile.say(sprites.readDataNumber(projectile, "angle"))
                 }
@@ -1079,6 +1091,8 @@ sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, oth
         sprite.destroy()
     }
 })
+// TODO: 
+// 
 let sprite_bloon: Sprite = null
 let progress = 0
 let dart_images: Image[] = []
